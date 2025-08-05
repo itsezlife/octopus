@@ -1,12 +1,39 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:meta/meta.dart' show immutable;
 import 'package:octopus/octopus.dart';
 
 import 'fake_routes.dart';
 import 'tester_extension.dart';
 
+@immutable
+class FakeExtra {
+  const FakeExtra({required this.data});
+
+  final Map<String, Object?> data;
+
+  @override
+  String toString() => 'FakeExtra(data: $data)';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FakeExtra &&
+          runtimeType == other.runtimeType &&
+          data == other.data;
+
+  @override
+  int get hashCode => data.hashCode;
+}
+
 void main() => group('Observer', () {
+      late FakeExtra extra;
+
+      setUp(() {
+        extra = const FakeExtra(data: {'complex': 'object'});
+      });
+
       testWidgets(
         'value.children',
         (tester) async {
@@ -32,10 +59,12 @@ void main() => group('Observer', () {
               ),
             ),
           );
+
+          /// Verify that extra handles custom data objects such as [FakeExtra]
           await octopus.push(
             FakeRoutes.category,
             arguments: {'id': '1'},
-            extra: {'extra': 'extra'},
+            extra: {'extra': extra},
           );
           await controller.pump();
           expect(
@@ -49,7 +78,7 @@ void main() => group('Observer', () {
           // Verify that new route have extra
           expect(
             octopus.observer.value.children.last.extra,
-            equals({'extra': 'extra'}),
+            equals({'extra': extra}),
           );
 
           // Verify that new route don't have extra
@@ -58,7 +87,7 @@ void main() => group('Observer', () {
             arguments: {'id': '2'},
           );
           await controller.pump();
-          
+
           expect(
             octopus.observer.value.children.last.extra,
             equals({}),
