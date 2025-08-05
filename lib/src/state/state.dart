@@ -492,6 +492,12 @@ sealed class OctopusNode extends OctopusNodeBase {
   /// Storage will be clean up after node will be excluded from state.
   Map<String, Object?> get extra => $NodeExtraStorage().getByKey(key);
 
+  /// Set some extra storage for [key].
+  /// You can store whatever you want inside that hash table.
+  /// Storage will be clean up after node will be excluded from state.
+  set extra(Map<String, Object?> value) =>
+      $NodeExtraStorage().setByKey(key, value);
+
   /// Returns true if this entity has extra storage.
   bool get hasExtra => extra.isNotEmpty;
 
