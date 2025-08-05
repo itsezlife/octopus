@@ -17,6 +17,8 @@ import 'package:octopus/src/controller/observer.dart';
 import 'package:octopus/src/controller/singleton.dart';
 import 'package:octopus/src/controller/typedefs.dart';
 import 'package:octopus/src/state/name_regexp.dart';
+import 'package:octopus/src/state/node_extra_storage.dart'
+    show $NodeExtraStorage;
 import 'package:octopus/src/state/state.dart';
 import 'package:octopus/src/util/state_util.dart';
 
@@ -192,8 +194,17 @@ final class Octopus$NavigatorImpl implements Octopus {
   }
 
   @override
-  Future<void> push(OctopusRoute route, {Map<String, String>? arguments}) =>
-      setState((state) => state..add(route.node(arguments: arguments)));
+  Future<void> push(
+    OctopusRoute route, {
+    Map<String, String>? arguments,
+    Map<String, Object?>? extra,
+  }) {
+    final node = route.node(arguments: arguments);
+    if (extra != null) {
+      $NodeExtraStorage().setByKey(node.key, extra);
+    }
+    return setState((state) => state..add(node));
+  }
 
   @override
   Future<void> pushNamed(String name, {Map<String, String>? arguments}) {

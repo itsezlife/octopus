@@ -105,7 +105,8 @@ abstract interface class Octopus {
 
   /// Push a new top route to the navigation stack
   /// with the specified [arguments].
-  Future<void> push(OctopusRoute route, {Map<String, String>? arguments});
+  Future<void> push(OctopusRoute route,
+      {Map<String, String>? arguments, Map<String, Object?>? extra});
 
   /// Push a new top route to the navigation stack
   /// with the specified [arguments].

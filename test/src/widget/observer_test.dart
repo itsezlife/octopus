@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:octopus/octopus.dart';
 
@@ -30,9 +32,10 @@ void main() => group('Observer', () {
               ),
             ),
           );
-          await octopus.setState(
-            (state) =>
-                state..add(FakeRoutes.category.node(arguments: {'id': '1'})),
+          await octopus.push(
+            FakeRoutes.category,
+            arguments: {'id': '1'},
+            extra: {'extra': 'extra'},
           );
           await controller.pump();
           expect(
@@ -42,6 +45,26 @@ void main() => group('Observer', () {
               hasLength(2),
             ),
           );
+
+          // Verify that new route have extra
+          expect(
+            octopus.observer.value.children.last.extra,
+            equals({'extra': 'extra'}),
+          );
+
+          // Verify that new route don't have extra
+          await octopus.push(
+            FakeRoutes.category,
+            arguments: {'id': '2'},
+          );
+          await controller.pump();
+          
+          expect(
+            octopus.observer.value.children.last.extra,
+            equals({}),
+          );
+
+          await octopus.pop();
           await octopus.pop();
           expect(
             octopus.observer.value.children,
@@ -56,6 +79,12 @@ void main() => group('Observer', () {
                 ),
               ),
             ),
+          );
+
+          // Verify that extra is removed after pop
+          expect(
+            octopus.observer.value.children.last.extra,
+            equals({}),
           );
         },
       );

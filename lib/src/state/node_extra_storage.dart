@@ -10,6 +10,9 @@ class $NodeExtraStorage {
 
   final Map<String, Map<String, Object?>?> _storage;
 
+  void setByKey(String key, Map<String, Object?> value) =>
+      _storage[key] = value;
+
   @internal
   Map<String, Object?> getByKey(String key) =>
       _storage[key] ??= <String, Object?>{};
