@@ -207,13 +207,14 @@ final class Octopus$NavigatorImpl implements Octopus {
   }
 
   @override
-  Future<void> pushNamed(String name, {Map<String, String>? arguments}) {
+  Future<void> pushNamed(String name,
+      {Map<String, String>? arguments, Map<String, Object?>? extra}) {
     final route = getRouteByName(name);
     if (route == null) {
       assert(false, 'Route with name "$name" not found');
       return Future<void>.value();
     } else {
-      return push(route, arguments: arguments);
+      return push(route, arguments: arguments, extra: extra);
     }
   }
 
