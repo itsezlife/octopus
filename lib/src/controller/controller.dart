@@ -113,6 +113,7 @@ abstract interface class Octopus {
   Future<void> pushNamed(
     String name, {
     Map<String, String>? arguments,
+    Map<String, Object?>? extra,
   });
 
   /// Push multiple routes to the navigation stack.
