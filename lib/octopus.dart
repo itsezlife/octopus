@@ -10,4 +10,5 @@ export 'src/widget/build_context_extension.dart';
 export 'src/widget/navigator.dart';
 export 'src/widget/no_animation.dart';
 export 'src/widget/route_context.dart';
+export 'src/widget/tabs.dart';
 export 'src/widget/tools.dart';
