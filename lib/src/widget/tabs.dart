@@ -34,6 +34,9 @@ typedef OctopusTabBuilder = Widget Function(
   OctopusOnBackButtonPressed? onBackButtonPressed,
 );
 
+/// Callback when the tab is changed.
+typedef OctopusOnTabChanged = void Function(int index, OctopusRoute tab);
+
 /// Variant of tabs to use.
 enum OctopusTabsVariant {
   /// Normal variant. Renders all tabs immediately.
@@ -60,6 +63,7 @@ class OctopusTabs extends StatefulWidget {
     this.onBackButtonPressed,
     this.tabStackBuilder = _defaultTabStackBuilder,
     this.tabBuilder = _defaultTabBuilder,
+    this.onTabChanged,
     super.key,
   }) : assert(tabs.length > 0, 'Tabs should contain at least 1 route');
 
@@ -75,6 +79,7 @@ class OctopusTabs extends StatefulWidget {
     this.onBackButtonPressed,
     this.tabStackBuilder = _defaultTabStackBuilder,
     this.tabBuilder = _defaultTabBuilder,
+    this.onTabChanged,
     super.key,
   })  : assert(tabs.length > 0, 'Tabs should contain at least 1 route'),
         variant = OctopusTabsVariant.lazy;
@@ -105,6 +110,9 @@ class OctopusTabs extends StatefulWidget {
 
   /// Callback builder for rendering a single tab.
   final OctopusTabBuilder tabBuilder;
+
+  /// Callback when the tab is changed.
+  final OctopusOnTabChanged? onTabChanged;
 
   /// Default callback builder for rendering a single tab.
   static Widget _defaultTabBuilder(
@@ -203,6 +211,8 @@ class _OctopusTabsState extends State<OctopusTabs> {
           t.name == _octopusStateObserver.value.arguments[widget.tabIdentifier],
       orElse: () => widget.tabs.first,
     );
+    
+    widget.onTabChanged?.call(_activeIndex, _tab);
 
     _octopusStateObserver.addListener(_onOctopusStateChanged);
   }
@@ -213,7 +223,7 @@ class _OctopusTabsState extends State<OctopusTabs> {
     super.dispose();
   }
 
-  // Pop to catalog at double tap on catalog tab
+  // Pop to root tab at double tap on current tab
   void _clearNavigationStack() {
     context.octopus.setState((state) {
       final branch = state.findByName(_tabRouteName(_tab));
@@ -231,6 +241,7 @@ class _OctopusTabsState extends State<OctopusTabs> {
       (args) => args[widget.tabIdentifier] = tab.name,
     );
     setState(() => _tab = tab);
+    widget.onTabChanged?.call(_activeIndex, _tab);
   }
 
   // Tab item pressed
