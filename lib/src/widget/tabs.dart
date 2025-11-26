@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:octopus/octopus.dart';
+import 'package:octopus/src/widget/lazy_indexed_stack.dart';
 
 /// Builds the UI for tabs, providing the current child widget
 /// and control callbacks.
@@ -9,6 +10,38 @@ typedef OctopusTabsBuilder = Widget Function(
   int currentIndex,
   ValueChanged<int> onTabPressed,
 );
+
+/// Callback for back button pressed.
+typedef OctopusOnBackButtonPressed = Future<bool> Function(
+    BuildContext context, NavigatorState navigator);
+
+/// Callback builder for rendering a stack of tabs.
+typedef OctopusTabStackBuilder = Widget Function(
+  BuildContext context,
+  int index,
+  List<OctopusRoute> tabs,
+  String tabIdentifier,
+  OctopusTabsVariant variant,
+  OctopusTabBuilder tabBuilder,
+  OctopusOnBackButtonPressed? onBackButtonPressed,
+);
+
+/// Callback builder for rendering a single tab.
+typedef OctopusTabBuilder = Widget Function(
+  BuildContext context,
+  OctopusRoute route,
+  String tabIdentifier,
+  OctopusOnBackButtonPressed? onBackButtonPressed,
+);
+
+/// Variant of tabs to use.
+enum OctopusTabsVariant {
+  /// Normal variant. Renders all tabs immediately.
+  normal,
+
+  /// Lazy variant. Renders tabs on demand.
+  lazy,
+}
 
 /// {@template octopus_tabs}
 /// Helper Widget to create tabs with internal navigators
@@ -21,11 +54,30 @@ class OctopusTabs extends StatefulWidget {
     required this.root,
     required this.tabs,
     required this.builder,
+    this.variant = OctopusTabsVariant.normal,
     this.tabIdentifier = 'tab',
     this.clearStackOnDoubleTap = true,
     this.onBackButtonPressed,
+    this.tabStackBuilder = _defaultTabStackBuilder,
+    this.tabBuilder = _defaultTabBuilder,
     super.key,
   }) : assert(tabs.length > 0, 'Tabs should contain at least 1 route');
+
+  /// Creates an [OctopusTabs] widget with lazy tabs stack rendering.
+  ///
+  /// {@macro octopus_tabs}
+  const OctopusTabs.lazy({
+    required this.root,
+    required this.tabs,
+    required this.builder,
+    this.tabIdentifier = 'tab',
+    this.clearStackOnDoubleTap = true,
+    this.onBackButtonPressed,
+    this.tabStackBuilder = _defaultTabStackBuilder,
+    this.tabBuilder = _defaultTabBuilder,
+    super.key,
+  })  : assert(tabs.length > 0, 'Tabs should contain at least 1 route'),
+        variant = OctopusTabsVariant.lazy;
 
   /// Unique key used to store and retrieve the active tab in router args.
   final String tabIdentifier;
@@ -43,8 +95,57 @@ class OctopusTabs extends StatefulWidget {
   final bool clearStackOnDoubleTap;
 
   /// Callback for back button pressed.
-  final Future<bool> Function(BuildContext context, NavigatorState navigator)?
-      onBackButtonPressed;
+  final OctopusOnBackButtonPressed? onBackButtonPressed;
+
+  /// Callback builder for rendering tabs.
+  final OctopusTabStackBuilder tabStackBuilder;
+
+  /// Variant of tabs to use.
+  final OctopusTabsVariant variant;
+
+  /// Callback builder for rendering a single tab.
+  final OctopusTabBuilder tabBuilder;
+
+  /// Default callback builder for rendering a single tab.
+  static Widget _defaultTabBuilder(
+          BuildContext context,
+          OctopusRoute route,
+          String tabIdentifier,
+          OctopusOnBackButtonPressed? onBackButtonPressed) =>
+      TabBucketNavigator(
+        route: route,
+        tabIdentifier: tabIdentifier,
+        onBackButtonPressed: onBackButtonPressed,
+      );
+
+  /// Default callback builder for rendering a stack of tabs.
+  static Widget _defaultTabStackBuilder(
+          BuildContext context,
+          int index,
+          List<OctopusRoute> tabs,
+          String tabIdentifier,
+          OctopusTabsVariant variant,
+          OctopusTabBuilder tabBuilder,
+          OctopusOnBackButtonPressed? onBackButtonPressed) =>
+      switch (variant) {
+        OctopusTabsVariant.normal => IndexedStack(
+            index: index,
+            children: [
+              for (final tab in tabs)
+                tabBuilder(context, tab, tabIdentifier, onBackButtonPressed)
+            ],
+          ),
+        OctopusTabsVariant.lazy => LazyIndexedStack(
+            index: index,
+            itemCount: tabs.length,
+            itemBuilder: (index) => tabBuilder(
+              context,
+              tabs[index],
+              tabIdentifier,
+              onBackButtonPressed,
+            ),
+          ),
+      };
 
   @override
   State<OctopusTabs> createState() => _OctopusTabsState();
@@ -157,17 +258,14 @@ class _OctopusTabsState extends State<OctopusTabs> {
   @override
   Widget build(BuildContext context) => widget.builder(
         context,
-        IndexedStack(
-          index: _activeIndex,
-          children: widget.tabs
-              .map(
-                (tab) => _TabBucketNavigator(
-                  route: tab,
-                  tabIdentifier: widget.tabIdentifier,
-                  onBackButtonPressed: widget.onBackButtonPressed,
-                ),
-              )
-              .toList(),
+        widget.tabStackBuilder(
+          context,
+          _activeIndex,
+          widget.tabs,
+          widget.tabIdentifier,
+          widget.variant,
+          widget.tabBuilder,
+          widget.onBackButtonPressed,
         ),
         _activeIndex,
         _onPressed,
@@ -175,14 +273,15 @@ class _OctopusTabsState extends State<OctopusTabs> {
 }
 
 /// {@template tabs}
-/// _TabBucketNavigator widget.
+/// TabBucketNavigator widget.
 /// {@endtemplate}
-class _TabBucketNavigator extends StatelessWidget {
+class TabBucketNavigator extends StatelessWidget {
   /// {@macro tabs}
-  const _TabBucketNavigator({
+  const TabBucketNavigator({
     required this.route,
     required this.tabIdentifier,
     this.onBackButtonPressed,
+    super.key,
   });
 
   /// The root route of the tab branch navigator.
@@ -192,8 +291,7 @@ class _TabBucketNavigator extends StatelessWidget {
   final String tabIdentifier;
 
   /// Callback for back button pressed.
-  final Future<bool> Function(BuildContext context, NavigatorState navigator)?
-      onBackButtonPressed;
+  final OctopusOnBackButtonPressed? onBackButtonPressed;
 
   @override
   Widget build(BuildContext context) => BucketNavigator(
