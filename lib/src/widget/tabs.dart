@@ -176,33 +176,6 @@ class _OctopusTabsState extends State<OctopusTabs> {
   @override
   void initState() {
     super.initState();
-
-    // Initialize the root branch structure after first frame.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.octopus.setState((state) {
-        final root = state.findByName(widget.root.name);
-
-        if (root == null) return state; // Do nothing if `root` not found.
-
-        // Keep only branches matching our tabs, remove others.
-        final validNames = widget.tabs.map(_tabRouteName).toSet();
-        root.removeWhere(
-          (node) => !validNames.contains(node.name),
-          recursive: true,
-        );
-
-        // Ensure each tab branch exists under root.
-        for (final tab in widget.tabs) {
-          final bucketName = _tabRouteName(tab);
-          final branch = root.putIfAbsent(
-              bucketName, () => OctopusNode.mutable(bucketName));
-          if (!branch.hasChildren) branch.add(OctopusNode.mutable(tab.name));
-        }
-
-        return state;
-      });
-    });
-
     _octopusStateObserver = context.octopus.observer;
 
     // Restore active tab from router args or default to first.
