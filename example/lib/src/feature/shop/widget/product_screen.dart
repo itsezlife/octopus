@@ -199,7 +199,8 @@ class ProductScreen extends StatelessWidget {
 class _ProductRatingAndPrice extends StatelessWidget {
   const _ProductRatingAndPrice({
     required this.product,
-    super.key, // ignore: unused_element
+    // ignore: unused_element_parameter
+    super.key,
   });
 
   final ProductEntity product;
@@ -379,7 +380,8 @@ class _ProductRatingAndPrice extends StatelessWidget {
 class _ProductStars extends StatefulWidget {
   const _ProductStars({
     required this.rating,
-    super.key, // ignore: unused_element
+    // ignore: unused_element_parameter
+    super.key,
   });
 
   final double rating;
@@ -494,7 +496,8 @@ class _ProductStarsState extends State<_ProductStars>
 
 class _ProductDivider extends StatelessWidget {
   const _ProductDivider({
-    super.key, // ignore: unused_element
+    // ignore: unused_element_parameter
+    super.key,
   });
 
   @override
@@ -513,7 +516,8 @@ class _ProductDivider extends StatelessWidget {
 }
 
 class _ProductDividerPainter extends CustomPainter {
-  const _ProductDividerPainter({super.repaint}); // ignore: unused_element
+  // ignore: unused_element_parameter
+  const _ProductDividerPainter({super.repaint});
 
   static final _paint = Paint()
     ..color = const Color(0x7FE0E0E0)
@@ -540,7 +544,8 @@ class _ProductDividerPainter extends CustomPainter {
 }
 
 class _ProductTags extends StatefulWidget {
-  const _ProductTags({super.key}); // ignore: unused_element
+  // ignore: unused_element_parameter
+  const _ProductTags({super.key});
   @override
   State<_ProductTags> createState() => _ProductTagsState();
 }
@@ -575,7 +580,8 @@ class _ProductTag extends StatelessWidget {
     this.k,
     this.v, {
     required this.color,
-    super.key, // ignore: unused_element
+    // ignore: unused_element_parameter
+    super.key,
   });
 
   final Color color;
@@ -659,7 +665,8 @@ class _ProductTag extends StatelessWidget {
 class _ProductProperties extends StatelessWidget {
   const _ProductProperties({
     required this.product,
-    super.key, // ignore: unused_element
+    // ignore: unused_element_parameter
+    super.key,
   });
 
   final ProductEntity product;
@@ -918,7 +925,8 @@ class ProductProperty extends StatelessWidget {
 }
 
 class _ProductPropertyDotsPainter extends CustomPainter {
-  const _ProductPropertyDotsPainter({super.repaint}); // ignore: unused_element
+  // ignore: unused_element_parameter
+  const _ProductPropertyDotsPainter({super.repaint});
 
   @override
   void paint(Canvas canvas, Size size) {

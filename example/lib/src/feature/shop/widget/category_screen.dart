@@ -266,7 +266,8 @@ class _ProductTile extends StatelessWidget {
 class _ProductCardImage extends StatelessWidget {
   const _ProductCardImage({
     required this.product,
-    super.key, // ignore: unused_element
+    // ignore: unused_element_parameter
+    super.key,
   });
 
   final ProductEntity product;
@@ -293,7 +294,8 @@ class _ProductCardImage extends StatelessWidget {
 class _ProductPriceTag extends StatelessWidget {
   const _ProductPriceTag({
     required this.product,
-    super.key, // ignore: unused_element
+    // ignore: unused_element_parameter
+    super.key,
   });
 
   final ProductEntity product;
@@ -363,7 +365,8 @@ class _ProductPriceTag extends StatelessWidget {
 class _SlantedRectanglePainter extends CustomPainter {
   const _SlantedRectanglePainter({
     this.padding = EdgeInsets.zero, // ignore: unused_element
-    super.repaint, // ignore: unused_element
+    // ignore: unused_element_parameter
+    super.repaint,
   });
 
   final EdgeInsets padding;

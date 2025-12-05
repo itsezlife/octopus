@@ -179,7 +179,7 @@ class _OctopusToolsState extends State<OctopusTools>
                     color: _controller.drive(
                       ColorTween(
                         begin: Colors.transparent,
-                        end: Colors.black.withOpacity(0.5),
+                        end: Colors.black.withValues(alpha: 0.5),
                       ),
                     ),
                     dismissible: true,
@@ -248,8 +248,6 @@ class _OctopusToolsController extends AnimationController {
       case AnimationStatus.reverse:
       case AnimationStatus.dismissed:
         return show();
-      default:
-        return TickerFuture.complete();
     }
   }
 }
@@ -257,7 +255,6 @@ class _OctopusToolsController extends AnimationController {
 class _OctopusTools$Tabs extends StatelessWidget {
   const _OctopusTools$Tabs({
     required this.octopus,
-    super.key, // ignore: unused_element
   });
 
   final Octopus octopus;
@@ -316,7 +313,6 @@ class _OctopusTools$Tabs extends StatelessWidget {
 class _OctopusTools$Tabs$Tree extends StatelessWidget {
   const _OctopusTools$Tabs$Tree({
     required this.observer,
-    super.key, // ignore: unused_element
   });
 
   final OctopusStateObserver observer;
@@ -408,10 +404,7 @@ class _OctopusTools$Tabs$Tree extends StatelessWidget {
 }
 
 class _OctopusTools$Tabs$Tree$Divider extends StatelessWidget {
-  const _OctopusTools$Tabs$Tree$Divider(
-    this.label, {
-    super.key, // ignore: unused_element
-  });
+  const _OctopusTools$Tabs$Tree$Divider(this.label);
 
   final String label;
 
@@ -451,7 +444,6 @@ class _OctopusTools$Tabs$Tree$Divider extends StatelessWidget {
 class _OctopusTools$Tabs$History extends StatefulWidget {
   const _OctopusTools$Tabs$History({
     required this.octopus,
-    super.key, // ignore: unused_element
   });
 
   final Octopus octopus;

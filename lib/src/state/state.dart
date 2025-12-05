@@ -895,10 +895,10 @@ base mixin _OctopusNodeBase$Mutable on OctopusNodeBase {
   bool get isMutable => false;
 
   @override
-  abstract final Map<String, String> arguments;
+  Map<String, String> get arguments;
 
   @override
-  abstract final List<OctopusNode$Mutable> children;
+  List<OctopusNode$Mutable> get children;
 
   @override
   void visitChildNodes(
@@ -1182,10 +1182,10 @@ base mixin _OctopusNodeBase$Immutable on OctopusNodeBase {
   bool get isMutable => false;
 
   @override
-  abstract final Map<String, String> arguments;
+  Map<String, String> get arguments;
 
   @override
-  abstract final List<OctopusNode$Immutable> children;
+  List<OctopusNode$Immutable> get children;
 
   @override
   void visitChildNodes(

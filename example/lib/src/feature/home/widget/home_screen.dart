@@ -45,7 +45,8 @@ class HomeScreen extends StatelessWidget {
 
 class _ShowDialogExample extends StatefulWidget {
   const _ShowDialogExample({
-    super.key, // ignore: unused_element
+    // ignore: unused_element_parameter
+    super.key,
   });
 
   @override
@@ -69,9 +70,7 @@ class _ShowDialogExampleState extends State<_ShowDialogExample> {
 }
 
 class _DialogExample extends StatefulWidget {
-  const _DialogExample({
-    super.key, // ignore: unused_element
-  });
+  const _DialogExample();
 
   @override
   State<_DialogExample> createState() => _DialogExampleState();

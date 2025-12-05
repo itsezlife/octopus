@@ -90,7 +90,8 @@ enum Routes with OctopusRoute {
 class _ShopLoader extends StatelessWidget {
   const _ShopLoader({
     required this.builder,
-    super.key, // ignore: unused_element
+    // ignore: unused_element_parameter
+    super.key,
   });
 
   static final Future<void> _loadShop = shop_screens.loadLibrary();

@@ -58,7 +58,8 @@ class _SignUpScreen$Buttons extends StatelessWidget {
   const _SignUpScreen$Buttons({
     required this.signUp,
     required this.cancel,
-    super.key, // ignore: unused_element
+    // ignore: unused_element_parameter
+    super.key,
   });
 
   final void Function()? signUp;

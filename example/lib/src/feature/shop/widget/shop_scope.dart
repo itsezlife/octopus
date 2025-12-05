@@ -184,7 +184,8 @@ class _InheritedCategories extends InheritedModel<CategoryID> {
     required this.root,
     required this.table,
     required super.child,
-    super.key, // ignore: unused_element
+    // ignore: unused_element_parameter
+    super.key,
   });
 
   /// List of root categories.
@@ -243,7 +244,8 @@ class _InheritedProducts extends InheritedModel<ProductID> {
   const _InheritedProducts({
     required this.table,
     required super.child,
-    super.key, // ignore: unused_element
+    // ignore: unused_element_parameter
+    super.key,
   });
 
   /// Table of products.
@@ -291,7 +293,8 @@ class _InheritedFavorite extends InheritedModel<ProductID> {
   const _InheritedFavorite({
     required this.favorites,
     required super.child,
-    super.key, // ignore: unused_element
+    // ignore: unused_element_parameter
+    super.key,
   });
 
   final Set<ProductID> favorites;

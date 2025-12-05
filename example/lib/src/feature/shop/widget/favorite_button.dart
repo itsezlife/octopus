@@ -54,8 +54,10 @@ class FavoriteButton extends StatelessWidget {
 class _FavoriteHeartBeatIcon extends StatefulWidget {
   const _FavoriteHeartBeatIcon({
     this.favorite = true,
-    this.duration = const Duration(milliseconds: 650), // ignore: unused_element
-    super.key, // ignore: unused_element
+    // ignore: unused_element_parameter
+    this.duration = const Duration(milliseconds: 650),
+    // ignore: unused_element_parameter
+    super.key,
   });
 
   /// Is the icon currently filled in?

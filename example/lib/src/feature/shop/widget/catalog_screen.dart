@@ -95,7 +95,8 @@ class CatalogScreen extends StatelessWidget {
 class _CatalogDivider extends StatelessWidget {
   const _CatalogDivider(
     this.title, {
-    super.key, // ignore: unused_element
+    // ignore: unused_element_parameter
+    super.key,
   });
 
   final String title;
@@ -217,7 +218,7 @@ class _CatalogTile extends StatelessWidget {
 
 /// Recently viewed products from the history stack
 class _RecentlyViewedProducts extends StatefulWidget {
-  // ignore: unused_element
+  // ignore: unused_element_parameter
   const _RecentlyViewedProducts({this.count = 10, super.key});
 
   final int count;

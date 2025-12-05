@@ -99,10 +99,10 @@ class ProductImageDialog extends StatelessWidget {
 }
 
 class _ProductImageBackButton extends StatelessWidget {
-  // ignore: unused_element
+  // ignore: unused_element_parameter
   const _ProductImageBackButton({super.key}) : _isLarge = false;
 
-  // ignore: unused_element
+  // ignore: unused_element_parameter, unused_element
   const _ProductImageBackButton.large({super.key}) : _isLarge = true;
 
   final bool _isLarge;

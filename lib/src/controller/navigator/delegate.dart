@@ -508,7 +508,7 @@ mixin _TitleMixin {
     SystemChrome.setApplicationSwitcherDescription(
       ApplicationSwitcherDescription(
         label: _$lastTitle = title,
-        primaryColor: (_$lastColor = color)?.value,
+        primaryColor: (_$lastColor = color)?.toARGB32(),
       ),
     ).ignore();
   }
