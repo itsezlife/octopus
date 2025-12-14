@@ -5,7 +5,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:meta/meta.dart';
 import 'package:octopus/src/controller/controller.dart';
 import 'package:octopus/src/controller/delegate.dart';
 import 'package:octopus/src/controller/guard.dart';
@@ -443,6 +442,13 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
   Future<T?> showDialog<T>(
     WidgetBuilder builder, {
     Map<String, String>? arguments,
+    bool barrierDismissible = true,
+    Color? barrierColor = Colors.black54,
+    String? barrierLabel,
+    bool useSafeArea = true,
+    bool? requestFocus,
+    Offset? anchorPoint,
+    TraversalEdgeBehavior? traversalEdgeBehavior,
   }) async {
     final key = shortHash(UniqueKey());
     final completer = Completer<T?>();
@@ -464,6 +470,13 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
           ...?arguments,
         },
         restorationId: null,
+        barrierDismissible: barrierDismissible,
+        barrierColor: barrierColor,
+        barrierLabel: barrierLabel,
+        useSafeArea: useSafeArea,
+        requestFocus: requestFocus,
+        anchorPoint: anchorPoint,
+        traversalEdgeBehavior: traversalEdgeBehavior,
       );
       await setNewRoutePath(
         currentConfiguration.mutate()

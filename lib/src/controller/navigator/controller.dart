@@ -324,6 +324,21 @@ final class Octopus$NavigatorImpl implements Octopus {
   Future<T?> showDialog<T>(
     WidgetBuilder builder, {
     Map<String, String>? arguments,
+    bool barrierDismissible = true,
+    Color? barrierColor = Colors.black54,
+    String? barrierLabel,
+    bool useSafeArea = true,
+    bool? requestFocus,
+    Offset? anchorPoint,
+    TraversalEdgeBehavior? traversalEdgeBehavior,
   }) =>
-      _routerDelegate.showDialog<T>(builder, arguments: arguments);
+      _routerDelegate.showDialog<T>(builder,
+          arguments: arguments,
+          barrierDismissible: barrierDismissible,
+          barrierColor: barrierColor,
+          barrierLabel: barrierLabel,
+          useSafeArea: useSafeArea,
+          requestFocus: requestFocus,
+          anchorPoint: anchorPoint,
+          traversalEdgeBehavior: traversalEdgeBehavior);
 }

@@ -184,7 +184,7 @@ class _OctopusTabsState extends State<OctopusTabs> {
           t.name == _octopusStateObserver.value.arguments[widget.tabIdentifier],
       orElse: () => widget.tabs.first,
     );
-    
+
     widget.onTabChanged?.call(_activeIndex, _tab);
 
     _octopusStateObserver.addListener(_onOctopusStateChanged);

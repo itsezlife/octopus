@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 import 'package:octopus/src/controller/config.dart';
 import 'package:octopus/src/controller/guard.dart';
@@ -176,5 +175,12 @@ abstract interface class Octopus {
   Future<T?> showDialog<T>(
     WidgetBuilder builder, {
     Map<String, String>? arguments,
+    bool barrierDismissible = true,
+    Color? barrierColor = Colors.black54,
+    String? barrierLabel,
+    bool useSafeArea = true,
+    bool? requestFocus,
+    Offset? anchorPoint,
+    TraversalEdgeBehavior? traversalEdgeBehavior,
   });
 }

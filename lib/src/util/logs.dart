@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
-import 'package:meta/meta.dart';
 
 /// Whether to enable logging.
 @internal
