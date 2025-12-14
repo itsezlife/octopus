@@ -325,6 +325,7 @@ final class Octopus$NavigatorImpl implements Octopus {
     WidgetBuilder builder, {
     Map<String, String>? arguments,
     bool barrierDismissible = true,
+    bool fullscreenDialog = false,
     Color? barrierColor = Colors.black54,
     String? barrierLabel,
     bool useSafeArea = true,
@@ -335,6 +336,7 @@ final class Octopus$NavigatorImpl implements Octopus {
       _routerDelegate.showDialog<T>(builder,
           arguments: arguments,
           barrierDismissible: barrierDismissible,
+          fullscreenDialog: fullscreenDialog,
           barrierColor: barrierColor,
           barrierLabel: barrierLabel,
           useSafeArea: useSafeArea,

@@ -176,6 +176,7 @@ abstract interface class Octopus {
     WidgetBuilder builder, {
     Map<String, String>? arguments,
     bool barrierDismissible = true,
+    bool fullscreenDialog = false,
     Color? barrierColor = Colors.black54,
     String? barrierLabel,
     bool useSafeArea = true,
