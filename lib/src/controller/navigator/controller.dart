@@ -16,6 +16,7 @@ import 'package:octopus/src/controller/navigator/observer.dart';
 import 'package:octopus/src/controller/observer.dart';
 import 'package:octopus/src/controller/singleton.dart';
 import 'package:octopus/src/controller/typedefs.dart';
+import 'package:octopus/src/state/duplicate_strategy.dart';
 import 'package:octopus/src/state/name_regexp.dart';
 import 'package:octopus/src/state/node_extra_storage.dart'
     show $NodeExtraStorage;
@@ -36,6 +37,7 @@ final class Octopus$NavigatorImpl implements Octopus {
     TransitionDelegate<Object?>? transitionDelegate,
     NotFoundBuilder? notFound,
     void Function(Object error, StackTrace stackTrace)? onError,
+    OctopusDuplicateStrategy? duplicateStrategy,
   }) {
     final list = List<OctopusRoute>.of(routes, growable: false);
     assert(list.isNotEmpty, 'Routes list should contain at least one route');

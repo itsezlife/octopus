@@ -9,6 +9,7 @@ import 'package:octopus/src/controller/navigator/controller.dart';
 import 'package:octopus/src/controller/observer.dart';
 import 'package:octopus/src/controller/singleton.dart';
 import 'package:octopus/src/controller/typedefs.dart';
+import 'package:octopus/src/state/duplicate_strategy.dart';
 import 'package:octopus/src/state/state.dart';
 import 'package:octopus/src/widget/inherited_octopus.dart';
 
@@ -30,6 +31,7 @@ abstract interface class Octopus {
     TransitionDelegate<Object?>? transitionDelegate,
     NotFoundBuilder? notFound,
     void Function(Object error, StackTrace stackTrace)? onError,
+    OctopusDuplicateStrategy? duplicateStrategy,
   }) = Octopus$NavigatorImpl;
 
   /// Receives the [Octopus] instance from the elements tree.

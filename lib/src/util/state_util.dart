@@ -2,6 +2,7 @@
 
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:meta/meta.dart';
+import 'package:octopus/src/state/duplicate_strategy.dart';
 import 'package:octopus/src/state/name_regexp.dart';
 import 'package:octopus/src/state/state.dart';
 import 'package:octopus/src/util/logs.dart';
@@ -298,40 +299,95 @@ abstract final class StateUtil {
     }
   }
 
-  /// Normalize state and exclude duplicates if exist.
-  static OctopusState$Immutable normalize(OctopusState state) {
+  /// Normalize state and allow duplicates by making them unique.
+  static OctopusState$Immutable normalize(
+    OctopusState state, {
+    OctopusDuplicateStrategy strategy = OctopusDuplicateStrategy.remove,
+  }) {
     final mutable = state.isMutable ? state : state.mutate();
 
     List<OctopusNode> normalizeChildren(List<OctopusNode> nodes) {
-      final keys = <String>{};
       final result = <OctopusNode>[];
-      final reversed = nodes.reversed;
-      for (final node in reversed) {
-        // Normalize children.
-        final children = normalizeChildren(node.children);
 
-        // Exclude arguments with invalid keys.
-        var arguments = node.arguments;
-        if (arguments.keys
-            .any((key) => key.isEmpty || !key.contains($nameRegExp))) {
-          arguments = <String, String>{
-            for (final entry in arguments.entries)
-              if (entry.key.isNotEmpty && entry.key.contains($nameRegExp))
-                entry.key: entry.value
-          };
+      if (strategy == OctopusDuplicateStrategy.remove) {
+        // Exclude duplicates by key (process in reverse)
+        final keys = <String>{};
+        final reversed = nodes.reversed;
+        for (final node in reversed) {
+          // Normalize children.
+          final children = normalizeChildren(node.children);
+
+          // Exclude arguments with invalid keys.
+          var arguments = node.arguments;
+          if (arguments.keys
+              .any((key) => key.isEmpty || !key.contains($nameRegExp))) {
+            arguments = <String, String>{
+              for (final entry in arguments.entries)
+                if (entry.key.isNotEmpty && entry.key.contains($nameRegExp))
+                  entry.key: entry.value
+            };
+          }
+
+          // Convert to immutable node.
+          final newNode = OctopusNode$Immutable(
+            name: node.name,
+            children: children,
+            arguments: arguments,
+          );
+
+          if (!keys.add(newNode.key)) continue;
+          result.insert(0, newNode);
         }
+      } else {
+        // Allow duplicates by making them unique
+        final usedKeys = <String, int>{};
 
-        // Convert to immutable node.
-        final newNode = OctopusNode$Immutable(
-          name: node.name,
-          children: children,
-          arguments: arguments,
-        );
+        for (final node in nodes) {
+          // Normalize children.
+          final children = normalizeChildren(node.children);
 
-        // Exclude duplicates by key.
-        if (!keys.add(newNode.key)) continue;
-        result.insert(0, newNode); //result.add(newNode);
+          // Exclude arguments with invalid keys.
+          var arguments = node.arguments;
+          if (arguments.keys
+              .any((key) => key.isEmpty || !key.contains($nameRegExp))) {
+            arguments = <String, String>{
+              for (final entry in arguments.entries)
+                if (entry.key.isNotEmpty && entry.key.contains($nameRegExp))
+                  entry.key: entry.value
+            };
+          }
+
+          // Create base node
+          var newNode = OctopusNode$Immutable(
+            name: node.name,
+            children: children,
+            arguments: arguments,
+          );
+
+          var baseKey = newNode.key;
+
+          // Check if we've seen this key before
+          if (usedKeys.containsKey(baseKey)) {
+            // This is a duplicate, increment counter and add suffix
+            final counter = usedKeys[baseKey]! + 1;
+            usedKeys[baseKey] = counter;
+
+            final uniqueArgs = Map<String, String>.from(arguments);
+            uniqueArgs['key'] = counter.toString();
+            newNode = OctopusNode$Immutable(
+              name: node.name,
+              children: children,
+              arguments: uniqueArgs,
+            );
+          } else {
+            // First occurrence, just mark it as seen
+            usedKeys[baseKey] = 0;
+          }
+
+          result.add(newNode);
+        }
       }
+
       return result;
     }
 

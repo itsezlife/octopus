@@ -12,6 +12,7 @@ import 'package:octopus/src/controller/navigator/observer.dart';
 import 'package:octopus/src/controller/observer.dart';
 import 'package:octopus/src/controller/state_queue.dart';
 import 'package:octopus/src/controller/typedefs.dart';
+import 'package:octopus/src/state/duplicate_strategy.dart';
 import 'package:octopus/src/state/node_extra_storage.dart';
 import 'package:octopus/src/state/state.dart';
 import 'package:octopus/src/util/logs.dart';
@@ -38,6 +39,7 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
     TransitionDelegate<Object?>? transitionDelegate,
     NotFoundBuilder? notFound,
     void Function(Object error, StackTrace stackTrace)? onError,
+    OctopusDuplicateStrategy? duplicateStrategy,
   })  : _observer = observer,
         _defaultRoute = defaultRoute,
         _guards = guards?.toList(growable: false) ?? <IOctopusGuard>[],
@@ -48,7 +50,9 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
                 ? const NoAnimationTransitionDelegate<Object?>()
                 : const DefaultTransitionDelegate<Object?>()),
         _notFound = notFound,
-        _onError = onError {
+        _onError = onError,
+        _duplicateStrategy =
+            duplicateStrategy ?? OctopusDuplicateStrategy.remove {
     // Subscribe to the guards.
     _guardsListener = Listenable.merge(_guards)..addListener(_onGuardsNotified);
     // Revalidate the initial state with the guards.
@@ -86,6 +90,9 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
 
   /// Error handler.
   final void Function(Object error, StackTrace stackTrace)? _onError;
+
+  /// Duplicate handling strategy.
+  final OctopusDuplicateStrategy _duplicateStrategy;
 
   /// Current octopus instance.
   @internal
@@ -413,7 +420,8 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
             if (newConfiguration.children.isEmpty) return;
 
             // Normalize configuration
-            final result = StateUtil.normalize(newConfiguration);
+            final result = StateUtil.normalize(newConfiguration,
+                strategy: _duplicateStrategy);
 
             if (_observer.changeState(result)) {
               _updateTitle(routes[result.children.lastOrNull?.name]);
