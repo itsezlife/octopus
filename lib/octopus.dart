@@ -4,6 +4,7 @@ export 'src/controller/controller.dart';
 export 'src/controller/delegate.dart';
 export 'src/controller/guard.dart';
 export 'src/controller/observer.dart';
+export 'src/state/duplicate_strategy.dart';
 export 'src/state/state.dart';
 export 'src/widget/bucket_navigator.dart';
 export 'src/widget/build_context_extension.dart';
