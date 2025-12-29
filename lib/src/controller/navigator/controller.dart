@@ -87,6 +87,7 @@ final class Octopus$NavigatorImpl implements Octopus {
       transitionDelegate: transitionDelegate,
       notFound: notFound,
       onError: onError,
+      duplicateStrategy: duplicateStrategy,
     );
     final controller = Octopus$NavigatorImpl._(
       routes: routesTable,
