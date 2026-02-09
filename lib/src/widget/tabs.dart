@@ -265,6 +265,10 @@ class TabBucketNavigator extends StatelessWidget {
     required this.route,
     required this.tabIdentifier,
     this.onBackButtonPressed,
+    this.observers = const <NavigatorObserver>[],
+    this.restorationScopeId,
+    this.transitionDelegate,
+    this.shouldHandleBackButton,
     super.key,
   });
 
@@ -277,12 +281,31 @@ class TabBucketNavigator extends StatelessWidget {
   /// Callback for back button pressed.
   final OctopusOnBackButtonPressed? onBackButtonPressed;
 
+  /// Observers for the tab navigator.
+  final List<NavigatorObserver> observers;
+
+  /// The restoration scope id to use for this navigator.
+  final String? restorationScopeId;
+
+  /// The transition delegate to use for this navigator.
+  final TransitionDelegate<Object?>? transitionDelegate;
+
+  /// Whether the tab navigator should handle back button.
+  final bool Function(BuildContext context)? shouldHandleBackButton;
+
   @override
   Widget build(BuildContext context) => BucketNavigator(
         bucket: '${route.name}-$tabIdentifier',
         // Handle back button only if the route is within tab's branch
-        shouldHandleBackButton: (_) =>
-            Octopus.instance.state.arguments[tabIdentifier] == route.name,
+        shouldHandleBackButton: (_) {
+          if (shouldHandleBackButton?.call(context) case final shouldHandle?) {
+            return shouldHandle;
+          }
+          return Octopus.instance.state.arguments[tabIdentifier] == route.name;
+        },
         onBackButtonPressed: onBackButtonPressed,
+        observers: observers,
+        restorationScopeId: restorationScopeId,
+        transitionDelegate: transitionDelegate,
       );
 }
