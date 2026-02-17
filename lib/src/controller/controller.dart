@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'package:octopus/src/controller/config.dart';
 import 'package:octopus/src/controller/guard.dart';
 import 'package:octopus/src/controller/navigator/controller.dart';
@@ -173,7 +172,6 @@ abstract interface class Octopus {
   /// Show a dialog as a declarative page.
   /// The dialog will be added to the navigation stack.
   /// [arguments] - dialog arguments
-  @experimental
   Future<T?> showDialog<T>(
     WidgetBuilder builder, {
     Map<String, String>? arguments,
