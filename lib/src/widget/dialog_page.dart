@@ -1,6 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
+/// Declarative page that creates a [RawDialogRoute] with a [RoutePageBuilder],
+/// matching [showGeneralDialog] behavior (animated page content).
+@internal
+class OctopusGeneralDialogPage extends Page<Object?> {
+  const OctopusGeneralDialogPage({
+    required this.pageBuilder,
+    super.key,
+    super.name,
+    super.arguments,
+    super.restorationId,
+    this.barrierDismissible = false,
+    this.barrierLabel,
+    this.barrierColor = const Color(0x80000000),
+    this.transitionDuration = const Duration(milliseconds: 200),
+    this.transitionBuilder,
+    this.requestFocus,
+    this.anchorPoint,
+    this.traversalEdgeBehavior,
+    this.directionalTraversalEdgeBehavior,
+    this.fullscreenDialog = false,
+  });
+
+  final RoutePageBuilder pageBuilder;
+  final bool barrierDismissible;
+  final String? barrierLabel;
+  final Color? barrierColor;
+  final Duration transitionDuration;
+  final RouteTransitionsBuilder? transitionBuilder;
+  final bool? requestFocus;
+  final Offset? anchorPoint;
+  final TraversalEdgeBehavior? traversalEdgeBehavior;
+  final TraversalEdgeBehavior? directionalTraversalEdgeBehavior;
+  final bool fullscreenDialog;
+
+  @override
+  Route<void> createRoute(BuildContext context) => RawDialogRoute<void>(
+        pageBuilder: pageBuilder,
+        barrierDismissible: barrierDismissible,
+        barrierLabel: barrierLabel,
+        barrierColor: barrierColor,
+        transitionDuration: transitionDuration,
+        transitionBuilder: transitionBuilder,
+        settings: this,
+        requestFocus: requestFocus,
+        anchorPoint: anchorPoint,
+        traversalEdgeBehavior: traversalEdgeBehavior,
+        directionalTraversalEdgeBehavior: directionalTraversalEdgeBehavior,
+        fullscreenDialog: fullscreenDialog,
+      );
+}
+
 /// Used for creating a dialog route if route name end with '-dialog'.
 @internal
 class OctopusDialogPage extends Page<Object?> {
