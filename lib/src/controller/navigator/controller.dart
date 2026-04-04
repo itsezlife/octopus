@@ -346,4 +346,34 @@ final class Octopus$NavigatorImpl implements Octopus {
           requestFocus: requestFocus,
           anchorPoint: anchorPoint,
           traversalEdgeBehavior: traversalEdgeBehavior);
+
+  @override
+  Future<T?> showGeneralDialog<T>({
+    required RoutePageBuilder pageBuilder,
+    Map<String, String>? arguments,
+    bool barrierDismissible = false,
+    String? barrierLabel,
+    Color barrierColor = const Color(0x80000000),
+    Duration transitionDuration = const Duration(milliseconds: 200),
+    RouteTransitionsBuilder? transitionBuilder,
+    bool? requestFocus,
+    Offset? anchorPoint,
+    TraversalEdgeBehavior? traversalEdgeBehavior,
+    TraversalEdgeBehavior? directionalTraversalEdgeBehavior,
+    bool fullscreenDialog = false,
+  }) =>
+      _routerDelegate.showGeneralDialog<T>(
+        pageBuilder: pageBuilder,
+        arguments: arguments,
+        barrierDismissible: barrierDismissible,
+        barrierLabel: barrierLabel,
+        barrierColor: barrierColor,
+        transitionDuration: transitionDuration,
+        transitionBuilder: transitionBuilder,
+        requestFocus: requestFocus,
+        anchorPoint: anchorPoint,
+        traversalEdgeBehavior: traversalEdgeBehavior,
+        directionalTraversalEdgeBehavior: directionalTraversalEdgeBehavior,
+        fullscreenDialog: fullscreenDialog,
+      );
 }

@@ -441,8 +441,8 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
     super.dispose();
   }
 
-  final Map<String, OctopusDialogPage> _dialogBuilders =
-      <String, OctopusDialogPage>{};
+  final Map<String, Page<Object?>> _dialogBuilders =
+      <String, Page<Object?>>{};
   final Map<String, Object?> _dialogResults = <String, Object?>{};
 
   /// Show a dialog as a declarative page.
@@ -509,6 +509,85 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
       return null; // ignore errors
     } finally {
       // Clean up
+      _observer.removeListener(onStateChanged);
+      _dialogBuilders.remove(key);
+      _dialogResults.remove(key);
+      if (!completer.isCompleted) completer.complete();
+    }
+  }
+
+  /// Show a declarative dialog page using [RawDialogRoute] (general dialog).
+  @internal
+  Future<T?> showGeneralDialog<T>({
+    required RoutePageBuilder pageBuilder,
+    Map<String, String>? arguments,
+    bool barrierDismissible = false,
+    String? barrierLabel,
+    Color barrierColor = const Color(0x80000000),
+    Duration transitionDuration = const Duration(milliseconds: 200),
+    RouteTransitionsBuilder? transitionBuilder,
+    bool? requestFocus,
+    Offset? anchorPoint,
+    TraversalEdgeBehavior? traversalEdgeBehavior,
+    TraversalEdgeBehavior? directionalTraversalEdgeBehavior,
+    bool fullscreenDialog = false,
+  }) async {
+    assert(
+      !barrierDismissible || barrierLabel != null,
+      'barrierLabel is required when barrierDismissible is true',
+    );
+    final key = shortHash(UniqueKey());
+    final completer = Completer<T?>();
+    void onStateChanged() {
+      if (completer.isCompleted) return;
+      final node = _observer.value.children.firstWhereOrNull((node) =>
+          node.name == _kDialogNodeName && node.arguments['k'] == key);
+      if (node != null) return;
+      final result = _dialogResults.remove(key);
+      completer.complete(result is T ? result : null);
+    }
+
+    try {
+      _dialogBuilders[key] = OctopusGeneralDialogPage(
+        name: _kDialogNodeName,
+        pageBuilder: pageBuilder,
+        arguments: <String, String>{
+          'k': key,
+          ...?arguments,
+        },
+        restorationId: null,
+        barrierDismissible: barrierDismissible,
+        barrierColor: barrierColor,
+        barrierLabel: barrierLabel,
+        transitionDuration: transitionDuration,
+        transitionBuilder: transitionBuilder,
+        requestFocus: requestFocus,
+        anchorPoint: anchorPoint,
+        traversalEdgeBehavior: traversalEdgeBehavior,
+        directionalTraversalEdgeBehavior: directionalTraversalEdgeBehavior,
+        fullscreenDialog: fullscreenDialog,
+      );
+      await setNewRoutePath(
+        currentConfiguration.mutate()
+          ..intention = OctopusStateIntention.navigate
+          ..children.add(
+            OctopusNode.mutable(
+              _kDialogNodeName,
+              arguments: <String, String>{
+                'k': key,
+                ...?arguments,
+              },
+            ),
+          ),
+      );
+      await Future<void>.delayed(Duration.zero);
+      _observer.addListener(onStateChanged);
+      onStateChanged();
+      final result = await completer.future;
+      return result;
+    } on Object {
+      return null; // ignore errors
+    } finally {
       _observer.removeListener(onStateChanged);
       _dialogBuilders.remove(key);
       _dialogResults.remove(key);

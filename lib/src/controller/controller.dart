@@ -184,4 +184,27 @@ abstract interface class Octopus {
     Offset? anchorPoint,
     TraversalEdgeBehavior? traversalEdgeBehavior,
   });
+
+  /// Show a dialog with a [RoutePageBuilder], like [showGeneralDialog].
+  ///
+  /// The [pageBuilder] receives route animations so you can drive custom
+  /// entrance and exit effects. Use [transitionBuilder] for full control over
+  /// how the route transitions; when it is null, a fade matches
+  /// [RawDialogRoute].
+  ///
+  /// When [barrierDismissible] is true, [barrierLabel] must be non-null.
+  Future<T?> showGeneralDialog<T>({
+    required RoutePageBuilder pageBuilder,
+    Map<String, String>? arguments,
+    bool barrierDismissible = false,
+    String? barrierLabel,
+    Color barrierColor = const Color(0x80000000),
+    Duration transitionDuration = const Duration(milliseconds: 200),
+    RouteTransitionsBuilder? transitionBuilder,
+    bool? requestFocus,
+    Offset? anchorPoint,
+    TraversalEdgeBehavior? traversalEdgeBehavior,
+    TraversalEdgeBehavior? directionalTraversalEdgeBehavior,
+    bool fullscreenDialog = false,
+  });
 }
