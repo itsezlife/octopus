@@ -181,7 +181,10 @@ class _OctopusTabsState extends State<OctopusTabs> {
     // Restore active tab from router args or default to first.
     _tab = widget.tabs.firstWhere(
       (t) =>
-          t.name == _octopusStateObserver.value.arguments[widget.tabIdentifier],
+          t.name ==
+          _octopusStateObserver.value
+              .findByName(widget.root.name)
+              ?.arguments[widget.tabIdentifier],
       orElse: () => widget.tabs.first,
     );
 
@@ -210,9 +213,12 @@ class _OctopusTabsState extends State<OctopusTabs> {
   void _switchTab(OctopusRoute tab) {
     if (!mounted) return;
     if (_tab == tab) return;
-    context.octopus.setArguments(
-      (args) => args[widget.tabIdentifier] = tab.name,
-    );
+    context.octopus.setState((state) {
+      final root = state.findByName(widget.root.name);
+      if (root == null) return state;
+      root.arguments[widget.tabIdentifier] = tab.name;
+      return state;
+    });
     setState(() => _tab = tab);
     widget.onTabChanged?.call(_activeIndex, _tab);
   }
@@ -233,7 +239,10 @@ class _OctopusTabsState extends State<OctopusTabs> {
   void _onOctopusStateChanged() {
     final newTab = widget.tabs.firstWhere(
       (t) =>
-          t.name == _octopusStateObserver.value.arguments[widget.tabIdentifier],
+          t.name ==
+          _octopusStateObserver.value
+              .findByName(widget.root.name)
+              ?.arguments[widget.tabIdentifier],
       orElse: () => widget.tabs.first,
     );
     _switchTab(newTab);
@@ -301,7 +310,10 @@ class TabBucketNavigator extends StatelessWidget {
           if (shouldHandleBackButton?.call(context) case final shouldHandle?) {
             return shouldHandle;
           }
-          return Octopus.instance.state.arguments[tabIdentifier] == route.name;
+          return Octopus.instance.state
+                  .findByName(route.name)
+                  ?.arguments[tabIdentifier] ==
+              route.name;
         },
         onBackButtonPressed: onBackButtonPressed,
         observers: observers,

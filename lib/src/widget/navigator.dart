@@ -11,7 +11,7 @@ class OctopusNavigator extends Navigator {
   const OctopusNavigator({
     required Octopus router,
     super.pages = const <Page<Object?>>[],
-    super.onPopPage,
+    super.onDidRemovePage,
     super.onUnknownRoute,
     super.transitionDelegate = const DefaultTransitionDelegate<Object?>(),
     super.reportsRouteUpdateToEngine = false,

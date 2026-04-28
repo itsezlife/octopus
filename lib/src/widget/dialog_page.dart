@@ -7,6 +7,7 @@ import 'package:meta/meta.dart';
 class OctopusGeneralDialogPage extends Page<Object?> {
   const OctopusGeneralDialogPage({
     required this.pageBuilder,
+    this.onResult,
     super.key,
     super.name,
     super.arguments,
@@ -24,6 +25,7 @@ class OctopusGeneralDialogPage extends Page<Object?> {
   });
 
   final RoutePageBuilder pageBuilder;
+  final ValueChanged<Object?>? onResult;
   final bool barrierDismissible;
   final String? barrierLabel;
   final Color? barrierColor;
@@ -36,7 +38,8 @@ class OctopusGeneralDialogPage extends Page<Object?> {
   final bool fullscreenDialog;
 
   @override
-  Route<void> createRoute(BuildContext context) => RawDialogRoute<void>(
+  Route<Object?> createRoute(BuildContext context) {
+    final route = RawDialogRoute<Object?>(
         pageBuilder: pageBuilder,
         barrierDismissible: barrierDismissible,
         barrierLabel: barrierLabel,
@@ -50,6 +53,10 @@ class OctopusGeneralDialogPage extends Page<Object?> {
         directionalTraversalEdgeBehavior: directionalTraversalEdgeBehavior,
         fullscreenDialog: fullscreenDialog,
       );
+    final onResult = this.onResult;
+    if (onResult != null) route.popped.then(onResult);
+    return route;
+  }
 }
 
 /// Used for creating a dialog route if route name end with '-dialog'.
@@ -57,6 +64,7 @@ class OctopusGeneralDialogPage extends Page<Object?> {
 class OctopusDialogPage extends Page<Object?> {
   const OctopusDialogPage({
     required this.builder,
+    this.onResult,
     super.key,
     super.name,
     super.arguments,
@@ -72,6 +80,7 @@ class OctopusDialogPage extends Page<Object?> {
   });
 
   final WidgetBuilder builder;
+  final ValueChanged<Object?>? onResult;
 
   final Color? barrierColor;
   final bool barrierDismissible;
@@ -83,7 +92,8 @@ class OctopusDialogPage extends Page<Object?> {
   final TraversalEdgeBehavior? traversalEdgeBehavior;
 
   @override
-  Route<void> createRoute(BuildContext context) => DialogRoute(
+  Route<Object?> createRoute(BuildContext context) {
+    final route = DialogRoute<Object?>(
         context: context,
         builder: builder,
         themes: themes,
@@ -96,4 +106,8 @@ class OctopusDialogPage extends Page<Object?> {
         traversalEdgeBehavior: traversalEdgeBehavior,
         settings: this,
       );
+    final onResult = this.onResult;
+    if (onResult != null) route.popped.then(onResult);
+    return route;
+  }
 }

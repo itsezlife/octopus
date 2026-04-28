@@ -150,34 +150,20 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
         ],
         transitionDelegate: _transitionDelegate,
         pages: pages,
-        onPopPage: _onPopPage,
+        onDidRemovePage: _onDidRemovePage,
         onUnknownRoute: (settings) => _onUnknownRoute(context, settings),
       ),
     );
   }
 
-  bool _onPopPage(Route<Object?> route, Object? result) => _handleErrors(
+  void _onDidRemovePage(Page<Object?> page) => _handleErrors(
         () {
-          if (!route.didPop(result)) return false;
-          {
-            final state = _observer.value.mutate();
-            if (state.children.isEmpty) return false;
-            final node = state.children.removeLast();
-
-            // If the node is a dialog, then save the result
-            if (node.name == _kDialogNodeName) {
-              final key = node.arguments['k'];
-              if (key != null) {
-                _dialogResults[key] = result;
-              }
-            }
-
-            // Update the state
-            setNewRoutePath(state);
-          }
-          return true;
+          final state = _observer.value.mutate();
+          if (state.children.isEmpty) return;
+          state.children.removeLast();
+          setNewRoutePath(state);
         },
-        (_, __) => false,
+        (_, __) {},
       );
 
   @override
@@ -474,6 +460,7 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
       _dialogBuilders[key] = OctopusDialogPage(
         name: _kDialogNodeName,
         builder: builder,
+        onResult: (result) => _dialogResults[key] = result,
         arguments: <String, String>{
           'k': key,
           ...?arguments,
@@ -551,6 +538,7 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
       _dialogBuilders[key] = OctopusGeneralDialogPage(
         name: _kDialogNodeName,
         pageBuilder: pageBuilder,
+        onResult: (result) => _dialogResults[key] = result,
         arguments: <String, String>{
           'k': key,
           ...?arguments,

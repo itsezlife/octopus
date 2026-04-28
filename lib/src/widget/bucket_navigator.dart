@@ -136,16 +136,15 @@ class _BucketNavigatorState extends State<BucketNavigator>
                 ? const NoAnimationTransitionDelegate<Object?>()
                 : const DefaultTransitionDelegate<Object?>()),
         pages: pages,
-        onPopPage: _onPopPage,
+        onDidRemovePage: _onDidRemovePage,
       ),
     );
   }
 
-  bool _onPopPage(Route<Object?> route, Object? result) {
-    if (!route.didPop(result)) return false;
+  void _onDidRemovePage(Page<Object?> page) {
     final node = _node;
-    if (node == null) return false;
-    if (node.children.length < 2) return false;
+    if (node == null) return;
+    if (node.children.length < 2) return;
     _router.setState(
       (state) {
         final node = state.findByName(widget.bucket);
@@ -155,7 +154,6 @@ class _BucketNavigatorState extends State<BucketNavigator>
         return state;
       },
     );
-    return true;
   }
 
   @override
