@@ -25,17 +25,18 @@ class InheritedOctopus extends InheritedWidget {
   /// The state from the closest instance of this class
   /// that encloses the given context, if any.
   /// e.g. `InheritedOctopus.maybeOf(context)`.
-  static InheritedOctopus? maybeOf(BuildContext context,
-          {bool listen = true}) =>
-      listen
-          ? context.dependOnInheritedWidgetOfExactType<InheritedOctopus>()
-          : context.getInheritedWidgetOfExactType<InheritedOctopus>();
+  static InheritedOctopus? maybeOf(
+    BuildContext context, {
+    bool listen = true,
+  }) => listen
+      ? context.dependOnInheritedWidgetOfExactType<InheritedOctopus>()
+      : context.getInheritedWidgetOfExactType<InheritedOctopus>();
 
   static Never _notFoundInheritedWidgetOfExactType() => throw ArgumentError(
-        'Out of scope, not found inherited widget '
-            'a InheritedOctopus of the exact type',
-        'out_of_scope',
-      );
+    'Out of scope, not found inherited widget '
+        'a InheritedOctopus of the exact type',
+    'out_of_scope',
+  );
 
   /// The state from the closest instance of this class
   /// that encloses the given context.

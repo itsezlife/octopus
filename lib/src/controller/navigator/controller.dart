@@ -64,9 +64,7 @@ final class Octopus$NavigatorImpl implements Octopus {
     final backButtonDispatcher = RootBackButtonDispatcher();
     final routeInformationParser = OctopusInformationParser(codec: codec);
     final routesTable = Map<String, OctopusRoute>.unmodifiable(
-      <String, OctopusRoute>{
-        for (final route in list) route.name: route,
-      },
+      <String, OctopusRoute>{for (final route in list) route.name: route},
     );
     final observer = OctopusStateObserver$NavigatorImpl(
       initialState?.freeze() ??
@@ -108,15 +106,15 @@ final class Octopus$NavigatorImpl implements Octopus {
     required OctopusInformationParser routeInformationParser,
     required BackButtonDispatcher backButtonDispatcher,
     required OctopusStateObserver observer,
-  })  : config = OctopusConfig(
-          routes: routes,
-          routeInformationProvider: routeInformationProvider,
-          routeInformationParser: routeInformationParser,
-          routerDelegate: routerDelegate,
-          backButtonDispatcher: backButtonDispatcher,
-          observer: observer,
-        ),
-        _routerDelegate = routerDelegate {
+  }) : config = OctopusConfig(
+         routes: routes,
+         routeInformationProvider: routeInformationProvider,
+         routeInformationParser: routeInformationParser,
+         routerDelegate: routerDelegate,
+         backButtonDispatcher: backButtonDispatcher,
+         observer: observer,
+       ),
+       _routerDelegate = routerDelegate {
     $octopusSingletonInstance = this;
   }
 
@@ -148,9 +146,10 @@ final class Octopus$NavigatorImpl implements Octopus {
 
   @override
   Future<void> setState(
-          OctopusState Function(OctopusState$Mutable state) change) =>
-      _routerDelegate.setNewRoutePath(
-          change(state.mutate()..intention = OctopusStateIntention.auto));
+    OctopusState Function(OctopusState$Mutable state) change,
+  ) => _routerDelegate.setNewRoutePath(
+    change(state.mutate()..intention = OctopusStateIntention.auto),
+  );
 
   @override
   Future<void> navigate(String location) =>
@@ -181,14 +180,15 @@ final class Octopus$NavigatorImpl implements Octopus {
 
   @override
   Future<void> popAll() => setState((state) {
-        final first = state.children.firstOrNull;
-        if (first == null) return state;
-        return OctopusState.single(first, arguments: state.arguments);
-      });
+    final first = state.children.firstOrNull;
+    if (first == null) return state;
+    return OctopusState.single(first, arguments: state.arguments);
+  });
 
   @override
   Future<List<OctopusNode>> popUntil(
-      bool Function(OctopusNode$Mutable node) predicate) {
+    bool Function(OctopusNode$Mutable node) predicate,
+  ) {
     final result = <OctopusNode>[];
     return setState((state) {
       result.addAll(state.removeUntil(predicate));
@@ -210,8 +210,11 @@ final class Octopus$NavigatorImpl implements Octopus {
   }
 
   @override
-  Future<void> pushNamed(String name,
-      {Map<String, String>? arguments, Map<String, Object?>? extra}) {
+  Future<void> pushNamed(
+    String name, {
+    Map<String, String>? arguments,
+    Map<String, Object?>? extra,
+  }) {
     final route = getRouteByName(name);
     if (route == null) {
       assert(false, 'Route with name "$name" not found');
@@ -223,15 +226,16 @@ final class Octopus$NavigatorImpl implements Octopus {
 
   @override
   Future<void> pushAll(
-          List<({OctopusRoute route, Map<String, String>? arguments})>
-              routes) =>
-      setState((state) => state
-        ..addAll(
-            [for (final e in routes) e.route.node(arguments: e.arguments)]));
+    List<({OctopusRoute route, Map<String, String>? arguments})> routes,
+  ) => setState(
+    (state) => state
+      ..addAll([for (final e in routes) e.route.node(arguments: e.arguments)]),
+  );
 
   @override
   Future<void> pushAllNamed(
-      List<({String name, Map<String, String>? arguments})> routes) {
+    List<({String name, Map<String, String>? arguments})> routes,
+  ) {
     final nodes = <OctopusNode>[];
     final table = config.routes;
     for (final e in routes) {
@@ -275,8 +279,7 @@ final class Octopus$NavigatorImpl implements Octopus {
   Future<void> replaceAll(
     OctopusNode Function(OctopusNode$Mutable) fn, {
     bool recursive = true,
-  }) =>
-      setState((state) => state..replaceAll(fn, recursive: recursive));
+  }) => setState((state) => state..replaceAll(fn, recursive: recursive));
 
   @override
   Future<void> setArguments(void Function(Map<String, String> args) change) =>
@@ -309,7 +312,9 @@ final class Octopus$NavigatorImpl implements Octopus {
               OctopusState$Mutable state => state,
               OctopusState$Immutable state => state.mutate(),
             };
-          } on Object {/* ignore */}
+          } on Object {
+            /* ignore */
+          }
         }
         setState((_) => mutableState);
         if (completer.isCompleted) return;
@@ -335,17 +340,18 @@ final class Octopus$NavigatorImpl implements Octopus {
     bool? requestFocus,
     Offset? anchorPoint,
     TraversalEdgeBehavior? traversalEdgeBehavior,
-  }) =>
-      _routerDelegate.showDialog<T>(builder,
-          arguments: arguments,
-          barrierDismissible: barrierDismissible,
-          fullscreenDialog: fullscreenDialog,
-          barrierColor: barrierColor,
-          barrierLabel: barrierLabel,
-          useSafeArea: useSafeArea,
-          requestFocus: requestFocus,
-          anchorPoint: anchorPoint,
-          traversalEdgeBehavior: traversalEdgeBehavior);
+  }) => _routerDelegate.showDialog<T>(
+    builder,
+    arguments: arguments,
+    barrierDismissible: barrierDismissible,
+    fullscreenDialog: fullscreenDialog,
+    barrierColor: barrierColor,
+    barrierLabel: barrierLabel,
+    useSafeArea: useSafeArea,
+    requestFocus: requestFocus,
+    anchorPoint: anchorPoint,
+    traversalEdgeBehavior: traversalEdgeBehavior,
+  );
 
   @override
   Future<T?> showGeneralDialog<T>({
@@ -361,19 +367,18 @@ final class Octopus$NavigatorImpl implements Octopus {
     TraversalEdgeBehavior? traversalEdgeBehavior,
     TraversalEdgeBehavior? directionalTraversalEdgeBehavior,
     bool fullscreenDialog = false,
-  }) =>
-      _routerDelegate.showGeneralDialog<T>(
-        pageBuilder: pageBuilder,
-        arguments: arguments,
-        barrierDismissible: barrierDismissible,
-        barrierLabel: barrierLabel,
-        barrierColor: barrierColor,
-        transitionDuration: transitionDuration,
-        transitionBuilder: transitionBuilder,
-        requestFocus: requestFocus,
-        anchorPoint: anchorPoint,
-        traversalEdgeBehavior: traversalEdgeBehavior,
-        directionalTraversalEdgeBehavior: directionalTraversalEdgeBehavior,
-        fullscreenDialog: fullscreenDialog,
-      );
+  }) => _routerDelegate.showGeneralDialog<T>(
+    pageBuilder: pageBuilder,
+    arguments: arguments,
+    barrierDismissible: barrierDismissible,
+    barrierLabel: barrierLabel,
+    barrierColor: barrierColor,
+    transitionDuration: transitionDuration,
+    transitionBuilder: transitionBuilder,
+    requestFocus: requestFocus,
+    anchorPoint: anchorPoint,
+    traversalEdgeBehavior: traversalEdgeBehavior,
+    directionalTraversalEdgeBehavior: directionalTraversalEdgeBehavior,
+    fullscreenDialog: fullscreenDialog,
+  );
 }

@@ -27,27 +27,24 @@ final void Function(Object? message) info = _logAll('INFO', 800);
 /// Potential problems
 @internal
 final void Function(Object exception, [StackTrace? stackTrace, String? reason])
-    warning = _logAll('WARN', 900);
+warning = _logAll('WARN', 900);
 
 /// Serious failures
 @internal
 final void Function(Object error, [StackTrace stackTrace, String? reason])
-    severe = _logAll('ERR!', 1000);
+severe = _logAll('ERR!', 1000);
 
-void Function(
-  Object? message, [
-  StackTrace? stackTrace,
-  String? reason,
-]) _logAll(String prefix, int level) => (message, [stackTrace, reason]) {
-      if (!kLogEnabled) return;
-      log(
-        '${reason ?? message}',
-        level: level,
-        name: 'octopus',
-        error: message is Exception || message is Error ? message : null,
-        stackTrace: stackTrace,
-      );
-    };
+void Function(Object? message, [StackTrace? stackTrace, String? reason])
+_logAll(String prefix, int level) => (message, [stackTrace, reason]) {
+  if (!kLogEnabled) return;
+  log(
+    '${reason ?? message}',
+    level: level,
+    name: 'octopus',
+    error: message is Exception || message is Error ? message : null,
+    stackTrace: stackTrace,
+  );
+};
 
 /// Measure the execution time of the function.
 @internal

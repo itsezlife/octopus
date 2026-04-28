@@ -22,9 +22,8 @@ import 'package:octopus/src/controller/information_provider_vm.dart';
 @internal
 abstract base class OctopusInformationProvider extends RouteInformationProvider
     with WidgetsBindingObserver, ChangeNotifier {
-  OctopusInformationProvider({
-    Listenable? refreshListenable,
-  }) : _refreshListenable = refreshListenable {
+  OctopusInformationProvider({Listenable? refreshListenable})
+    : _refreshListenable = refreshListenable {
     if (kFlutterMemoryAllocationsEnabled) {
       ChangeNotifier.maybeDispatchObjectCreation(this);
     }
@@ -34,20 +33,22 @@ abstract base class OctopusInformationProvider extends RouteInformationProvider
   factory OctopusInformationProvider.platform({
     RouteInformation? initialRouteInformation,
     Listenable? refreshListenable,
-  }) =>
-      kIsWeb
-          ? OctopusInformationProvider$JS(
-              initialRouteInformation: initialRouteInformation,
-              refreshListenable: refreshListenable,
-            )
-          : OctopusInformationProvider$VM(
-              initialRouteInformation: initialRouteInformation,
-              refreshListenable: refreshListenable,
-            );
+  }) => kIsWeb
+      ? OctopusInformationProvider$JS(
+          initialRouteInformation: initialRouteInformation,
+          refreshListenable: refreshListenable,
+        )
+      : OctopusInformationProvider$VM(
+          initialRouteInformation: initialRouteInformation,
+          refreshListenable: refreshListenable,
+        );
 
   static RouteInformation initialRouteInformation() {
-    var platformDefault =
-        WidgetsBinding.instance.platformDispatcher.defaultRouteName.trim();
+    var platformDefault = WidgetsBinding
+        .instance
+        .platformDispatcher
+        .defaultRouteName
+        .trim();
     if (platformDefault.isEmpty || !platformDefault.startsWith('/'))
       platformDefault = '/$platformDefault';
     Uri? uri;
@@ -59,8 +60,9 @@ abstract base class OctopusInformationProvider extends RouteInformationProvider
     return uri == null ? kEmptyRouteInformation : RouteInformation(uri: uri);
   }
 
-  static final RouteInformation kEmptyRouteInformation =
-      RouteInformation(uri: Uri());
+  static final RouteInformation kEmptyRouteInformation = RouteInformation(
+    uri: Uri(),
+  );
 
   final Listenable? _refreshListenable;
 

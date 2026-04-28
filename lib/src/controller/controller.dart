@@ -45,8 +45,7 @@ abstract interface class Octopus {
   static OctopusState$Immutable stateOf(
     BuildContext context, {
     bool listen = true,
-  }) =>
-      InheritedOctopus.of(context, listen: true).state;
+  }) => InheritedOctopus.of(context, listen: true).state;
 
   /// Receives the last initializated [Octopus] instance.
   static Octopus get instance =>
@@ -83,7 +82,8 @@ abstract interface class Octopus {
   /// Better to use [transaction] method to change multiple states
   /// at once synchronously at the same time and merge changes into transaction.
   Future<void> setState(
-      OctopusState Function(OctopusState$Mutable state) change);
+    OctopusState Function(OctopusState$Mutable state) change,
+  );
 
   /// Navigate to the specified location.
   Future<void> navigate(String location);
@@ -105,8 +105,11 @@ abstract interface class Octopus {
 
   /// Push a new top route to the navigation stack
   /// with the specified [arguments].
-  Future<void> push(OctopusRoute route,
-      {Map<String, String>? arguments, Map<String, Object?>? extra});
+  Future<void> push(
+    OctopusRoute route, {
+    Map<String, String>? arguments,
+    Map<String, Object?>? extra,
+  });
 
   /// Push a new top route to the navigation stack
   /// with the specified [arguments].
@@ -118,7 +121,8 @@ abstract interface class Octopus {
 
   /// Push multiple routes to the navigation stack.
   Future<void> pushAll(
-      List<({OctopusRoute route, Map<String, String>? arguments})> routes);
+    List<({OctopusRoute route, Map<String, String>? arguments})> routes,
+  );
 
   /// Push multiple routes to the navigation stack.
   Future<void> pushAllNamed(

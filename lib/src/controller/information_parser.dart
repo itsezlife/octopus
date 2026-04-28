@@ -10,7 +10,7 @@ import 'package:octopus/src/state/state_codec.dart';
 @internal
 class OctopusInformationParser implements RouteInformationParser<OctopusState> {
   OctopusInformationParser({Codec<RouteInformation, OctopusState>? codec})
-      : _codec = codec ?? const OctopusStateCodec();
+    : _codec = codec ?? const OctopusStateCodec();
 
   final Codec<RouteInformation, OctopusState> _codec;
 
@@ -18,8 +18,7 @@ class OctopusInformationParser implements RouteInformationParser<OctopusState> {
   Future<OctopusState> parseRouteInformationWithDependencies(
     RouteInformation routeInformation,
     BuildContext context,
-  ) =>
-      parseRouteInformation(routeInformation);
+  ) => parseRouteInformation(routeInformation);
 
   @override
   Future<OctopusState> parseRouteInformation(RouteInformation route) =>

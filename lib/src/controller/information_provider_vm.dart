@@ -24,8 +24,8 @@ final class OctopusInformationProvider$VM extends OctopusInformationProvider {
     required RouteInformation valueInEngine,
     required RouteInformation value,
     super.refreshListenable,
-  })  : _value = value,
-        _valueInEngine = valueInEngine;
+  }) : _value = value,
+       _valueInEngine = valueInEngine;
 
   @override
   void routerReportsNewRouteInformation(
@@ -95,10 +95,14 @@ final class OctopusInformationProvider$VM extends OctopusInformationProvider {
 
     if (replace) {
       SystemNavigatorUtil.replaceState(
-          data: routeInformation.state, url: routeInformation.uri);
+        data: routeInformation.state,
+        url: routeInformation.uri,
+      );
     } else {
       SystemNavigatorUtil.pushState(
-          data: routeInformation.state, url: routeInformation.uri);
+        data: routeInformation.state,
+        url: routeInformation.uri,
+      );
     }
     _value = _valueInEngine = routeInformation;
   }
@@ -124,9 +128,10 @@ final class OctopusInformationProvider$VM extends OctopusInformationProvider {
   @override
   Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
     assert(
-        hasListeners,
-        'A OctopusInformationProvider must have '
-        'at least one listener before it can be used.');
+      hasListeners,
+      'A OctopusInformationProvider must have '
+      'at least one listener before it can be used.',
+    );
     pushRoute(routeInformation);
     return SynchronousFuture<bool>(true);
   }
@@ -135,9 +140,10 @@ final class OctopusInformationProvider$VM extends OctopusInformationProvider {
   @Deprecated('Use didPushRouteInformation instead')
   Future<bool> didPushRoute(String route) {
     assert(
-        hasListeners,
-        'A OctopusInformationProvider must have '
-        'at least one listener before it can be used.');
+      hasListeners,
+      'A OctopusInformationProvider must have '
+      'at least one listener before it can be used.',
+    );
     pushRoute(RouteInformation(uri: Uri.tryParse(route)));
     return SynchronousFuture<bool>(true);
   }

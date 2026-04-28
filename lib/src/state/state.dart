@@ -41,13 +41,13 @@ enum OctopusStateIntention {
   const OctopusStateIntention(this.name);
 
   factory OctopusStateIntention.fromName(String? name) => switch (name) {
-        'auto' => OctopusStateIntention.auto,
-        'neglect' => OctopusStateIntention.neglect,
-        'replace' => OctopusStateIntention.replace,
-        'navigate' => OctopusStateIntention.navigate,
-        'cancel' => OctopusStateIntention.cancel,
-        _ => OctopusStateIntention.auto,
-      };
+    'auto' => OctopusStateIntention.auto,
+    'neglect' => OctopusStateIntention.neglect,
+    'replace' => OctopusStateIntention.replace,
+    'navigate' => OctopusStateIntention.navigate,
+    'cancel' => OctopusStateIntention.cancel,
+    _ => OctopusStateIntention.auto,
+  };
 
   /// Intention name
   final String name;
@@ -61,9 +61,8 @@ enum OctopusStateIntention {
 /// this callback.
 ///
 /// Return false to stop the walk.
-typedef ConditionalNodeVisitor<Node extends OctopusNode> = bool Function(
-  Node node,
-);
+typedef ConditionalNodeVisitor<Node extends OctopusNode> =
+    bool Function(Node node);
 
 /// {@template octopus_state}
 /// Router whole application state
@@ -95,12 +94,11 @@ sealed class OctopusState extends OctopusNodeBase {
     OctopusNode node, {
     Map<String, String>? arguments,
     OctopusStateIntention intention = OctopusStateIntention.auto,
-  }) =>
-      OctopusState$Mutable(
-        children: <OctopusNode$Mutable>[node.mutate()],
-        arguments: arguments ?? <String, String>{},
-        intention: intention,
-      );
+  }) => OctopusState$Mutable(
+    children: <OctopusNode$Mutable>[node.mutate()],
+    arguments: arguments ?? <String, String>{},
+    intention: intention,
+  );
 
   /// Empty state
   ///
@@ -109,12 +107,11 @@ sealed class OctopusState extends OctopusNodeBase {
   static OctopusState$Mutable empty({
     Map<String, String>? arguments,
     OctopusStateIntention intention = OctopusStateIntention.auto,
-  }) =>
-      OctopusState$Mutable(
-        children: <OctopusNode$Mutable>[],
-        arguments: arguments ?? <String, String>{},
-        intention: intention,
-      );
+  }) => OctopusState$Mutable(
+    children: <OctopusNode$Mutable>[],
+    arguments: arguments ?? <String, String>{},
+    intention: intention,
+  );
 
   /// Create state from json
   ///
@@ -127,7 +124,7 @@ sealed class OctopusState extends OctopusNodeBase {
     if (json['children'] case Iterable list) {
       children = <OctopusNode$Mutable>[
         for (final item in list)
-          if (item is Map<String, Object?>) OctopusNode.fromJson(item)
+          if (item is Map<String, Object?>) OctopusNode.fromJson(item),
       ];
     } else {
       children = <OctopusNode$Mutable>[];
@@ -170,12 +167,11 @@ sealed class OctopusState extends OctopusNodeBase {
     List<OctopusNode> children, {
     Map<String, String>? arguments,
     OctopusStateIntention intention = OctopusStateIntention.auto,
-  }) =>
-      OctopusState$Mutable._(
-        children: children.map((node) => node.mutate()).toList(),
-        arguments: arguments ?? <String, String>{},
-        intention: intention,
-      );
+  }) => OctopusState$Mutable._(
+    children: children.map((node) => node.mutate()).toList(),
+    arguments: arguments ?? <String, String>{},
+    intention: intention,
+  );
 
   /// Intention to change state for application and platform.
   /// Useful to break state transition and do not add new location entry.
@@ -204,10 +200,10 @@ sealed class OctopusState extends OctopusNodeBase {
 
   /// Returns a json representation of this state.
   Map<String, Object?> toJson() => <String, Object?>{
-        'arguments': arguments,
-        'children': children.map((child) => child.toJson()).toList(),
-        'intention': intention.name,
-      };
+    'arguments': arguments,
+    'children': children.map((child) => child.toJson()).toList(),
+    'intention': intention.name,
+  };
 
   /// Returns a string representation of this node and its descendants.
   /// e.g.
@@ -236,19 +232,18 @@ final class OctopusState$Mutable extends OctopusState
     required List<OctopusNode> children,
     required Map<String, String> arguments,
     required OctopusStateIntention intention,
-  }) =>
-      OctopusState$Mutable._(
-        children: _mutableNodes(children),
-        arguments: Map<String, String>.of(arguments),
-        intention: intention,
-      );
+  }) => OctopusState$Mutable._(
+    children: _mutableNodes(children),
+    arguments: Map<String, String>.of(arguments),
+    intention: intention,
+  );
 
   /// {@macro octopus_state}
   factory OctopusState$Mutable.from(OctopusState state) => OctopusState$Mutable(
-        children: state.children,
-        arguments: state.arguments,
-        intention: state.intention,
-      );
+    children: state.children,
+    arguments: state.arguments,
+    intention: state.intention,
+  );
 
   OctopusState$Mutable._({
     required this.children,
@@ -279,10 +274,10 @@ final class OctopusState$Mutable extends OctopusState
 
   @override
   OctopusState$Mutable copy() => OctopusState$Mutable._(
-        children: _mutableNodes(children),
-        arguments: Map<String, String>.of(arguments),
-        intention: intention,
-      );
+    children: _mutableNodes(children),
+    arguments: Map<String, String>.of(arguments),
+    intention: intention,
+  );
 
   @override
   int get hashCode => location.hashCode;
@@ -307,22 +302,21 @@ final class OctopusState$Immutable extends OctopusState
     required List<OctopusNode> children,
     required Map<String, String> arguments,
     required OctopusStateIntention intention,
-  }) =>
-      OctopusState$Immutable._(
-        children: _freezeNodes(children),
-        arguments: _freezeArguments(arguments),
-        intention: intention,
-      );
+  }) => OctopusState$Immutable._(
+    children: _freezeNodes(children),
+    arguments: _freezeArguments(arguments),
+    intention: intention,
+  );
 
   /// {@macro octopus_state}
   factory OctopusState$Immutable.from(OctopusState state) =>
       state is OctopusState$Immutable
-          ? state
-          : OctopusState$Immutable(
-              children: state.children,
-              arguments: state.arguments,
-              intention: state.intention,
-            );
+      ? state
+      : OctopusState$Immutable(
+          children: state.children,
+          arguments: state.arguments,
+          intention: state.intention,
+        );
 
   OctopusState$Immutable._({
     required this.children,
@@ -353,10 +347,10 @@ final class OctopusState$Immutable extends OctopusState
 
   @override
   OctopusState$Immutable copy() => OctopusState$Immutable(
-        children: children,
-        arguments: arguments,
-        intention: intention,
-      );
+    children: children,
+    arguments: arguments,
+    intention: intention,
+  );
 
   @override
   late final int hashCode = location.hashCode;
@@ -409,7 +403,7 @@ sealed class OctopusNode extends OctopusNodeBase {
     if (json['children'] case Iterable list) {
       children = <OctopusNode>[
         for (final item in list)
-          if (item is Map<String, Object?>) OctopusNode.fromJson(item)
+          if (item is Map<String, Object?>) OctopusNode.fromJson(item),
       ];
     } else {
       children = <OctopusNode>[];
@@ -438,12 +432,11 @@ sealed class OctopusNode extends OctopusNodeBase {
     String name, {
     Map<String, String>? arguments,
     List<OctopusNode>? children,
-  }) =>
-      OctopusNode$Mutable(
-        name: name,
-        arguments: arguments ?? <String, String>{},
-        children: children ?? <OctopusNode>[],
-      );
+  }) => OctopusNode$Mutable(
+    name: name,
+    arguments: arguments ?? <String, String>{},
+    children: children ?? <OctopusNode>[],
+  );
 
   /// Create immutable node
   ///
@@ -453,12 +446,11 @@ sealed class OctopusNode extends OctopusNodeBase {
     String name, {
     Map<String, String>? arguments,
     List<OctopusNode>? children,
-  }) =>
-      OctopusNode$Immutable(
-        name: name,
-        arguments: arguments ?? const <String, String>{},
-        children: children ?? const <OctopusNode>[],
-      );
+  }) => OctopusNode$Immutable(
+    name: name,
+    arguments: arguments ?? const <String, String>{},
+    children: children ?? const <OctopusNode>[],
+  );
 
   /// Create mutable node from route
   ///
@@ -468,12 +460,11 @@ sealed class OctopusNode extends OctopusNodeBase {
     OctopusRoute route, {
     Map<String, String>? arguments,
     List<OctopusNode>? children,
-  }) =>
-      OctopusNode$Mutable(
-        name: route.name,
-        arguments: arguments ?? <String, String>{},
-        children: children ?? <OctopusNode>[],
-      );
+  }) => OctopusNode$Mutable(
+    name: route.name,
+    arguments: arguments ?? <String, String>{},
+    children: children ?? <OctopusNode>[],
+  );
 
   /// Identifier of this node based on its [name] and [arguments].
   String get key;
@@ -523,10 +514,10 @@ sealed class OctopusNode extends OctopusNodeBase {
 
   /// Returns a json representation of this node.
   Map<String, Object?> toJson() => <String, Object?>{
-        'name': name,
-        'arguments': arguments,
-        'children': children.map((child) => child.toJson()).toList(),
-      };
+    'name': name,
+    'arguments': arguments,
+    'children': children.map((child) => child.toJson()).toList(),
+  };
 
   /// Returns string representation of this node.
   /// e.g. Category {id: 1}
@@ -542,42 +533,39 @@ final class OctopusNode$Mutable extends OctopusNode
     required String name,
     required List<OctopusNode> children,
     required Map<String, String> arguments,
-  }) =>
-      OctopusNode$Mutable._(
-        name: name,
-        arguments: Map<String, String>.of(arguments),
-        children: _mutableNodes(children),
-      );
+  }) => OctopusNode$Mutable._(
+    name: name,
+    arguments: Map<String, String>.of(arguments),
+    children: _mutableNodes(children),
+  );
 
   /// {@macro node}
   factory OctopusNode$Mutable.from(OctopusNode node) => OctopusNode$Mutable(
-        name: node.name,
-        arguments: Map<String, String>.of(node.arguments),
-        children: _mutableNodes(node.children),
-      );
+    name: node.name,
+    arguments: Map<String, String>.of(node.arguments),
+    children: _mutableNodes(node.children),
+  );
 
   OctopusNode$Mutable._({
     required this.name,
     required this.children,
     required this.arguments,
-  })  : assert(
-          name.isNotEmpty,
-          'Name should not be empty',
-        ),
-        assert(
-          name.contains($nameRegExp),
-          'Name should use only alphanumeric characters and dashes',
-        ),
-        super._();
+  }) : assert(name.isNotEmpty, 'Name should not be empty'),
+       assert(
+         name.contains($nameRegExp),
+         'Name should use only alphanumeric characters and dashes',
+       ),
+       super._();
 
   @override
   @nonVirtual
   String get key {
     if (arguments.isEmpty) return name;
-    final args = arguments.entries
-        .map<String>((e) => '${e.key}=${e.value}')
-        .toList(growable: false)
-      ..sort((a, b) => a.compareTo(b));
+    final args =
+        arguments.entries
+            .map<String>((e) => '${e.key}=${e.value}')
+            .toList(growable: false)
+          ..sort((a, b) => a.compareTo(b));
     return '$name#${args.join(';')}';
   }
 
@@ -601,24 +589,24 @@ final class OctopusNode$Mutable extends OctopusNode
 
   @override
   OctopusNode$Immutable freeze() => OctopusNode$Immutable._(
-        name: name,
-        children: _freezeNodes(children),
-        arguments: _freezeArguments(arguments),
-      );
+    name: name,
+    children: _freezeNodes(children),
+    arguments: _freezeArguments(arguments),
+  );
 
   @override
   OctopusNode$Mutable copy() => OctopusNode$Mutable._(
-        name: name,
-        children: _mutableNodes(children),
-        arguments: Map<String, String>.of(arguments),
-      );
+    name: name,
+    children: _mutableNodes(children),
+    arguments: Map<String, String>.of(arguments),
+  );
 
   @override
   int get hashCode => jenkinsHashAll([
-        name, // Name of the node
-        arguments, // Arguments of the node
-        children, // Children of the node
-      ]);
+    name, // Name of the node
+    arguments, // Arguments of the node
+    children, // Children of the node
+  ]);
 
   @override
   bool operator ==(Object other) {
@@ -638,26 +626,22 @@ final class OctopusNode$Immutable extends OctopusNode
     required String name,
     required List<OctopusNode> children,
     required Map<String, String> arguments,
-  }) =>
-      OctopusNode$Immutable._(
-        name: name,
-        children: _freezeNodes(children),
-        arguments: _freezeArguments(arguments),
-      );
+  }) => OctopusNode$Immutable._(
+    name: name,
+    children: _freezeNodes(children),
+    arguments: _freezeArguments(arguments),
+  );
 
   OctopusNode$Immutable._({
     required this.name,
     required this.children,
     required this.arguments,
-  })  : assert(
-          name.isNotEmpty,
-          'Name should not be empty',
-        ),
-        assert(
-          name.contains($nameRegExp),
-          'Name should use only alphanumeric characters and dashes',
-        ),
-        super._();
+  }) : assert(name.isNotEmpty, 'Name should not be empty'),
+       assert(
+         name.contains($nameRegExp),
+         'Name should use only alphanumeric characters and dashes',
+       ),
+       super._();
 
   /// {@macro node}
   factory OctopusNode$Immutable.from(OctopusNode node) => _freezeNode(node);
@@ -676,8 +660,8 @@ final class OctopusNode$Immutable extends OctopusNode
   late final String key = arguments.isEmpty
       ? name
       : '$name'
-          '#'
-          '${arguments.entries.map((e) => '${e.key}=${e.value}').join(';')}';
+            '#'
+            '${arguments.entries.map((e) => '${e.key}=${e.value}').join(';')}';
 
   @override
   bool get isMutable => false;
@@ -693,10 +677,10 @@ final class OctopusNode$Immutable extends OctopusNode
 
   @override
   OctopusNode$Immutable copy() => OctopusNode$Immutable(
-        name: name,
-        children: children,
-        arguments: arguments,
-      );
+    name: name,
+    children: children,
+    arguments: arguments,
+  );
 
   @override
   @nonVirtual
@@ -717,12 +701,13 @@ final class OctopusNode$Immutable extends OctopusNode
 }
 
 /// Page builder for routes.
-typedef DefaultOctopusPageBuilder = Page<Object?> Function(
-  BuildContext context,
-  OctopusRoute route,
-  OctopusState state,
-  OctopusNode node,
-);
+typedef DefaultOctopusPageBuilder =
+    Page<Object?> Function(
+      BuildContext context,
+      OctopusRoute route,
+      OctopusState state,
+      OctopusNode node,
+    );
 
 /// Interface for all routes.
 @immutable
@@ -732,15 +717,15 @@ mixin OctopusRoute {
       _defaultPageBuilder = fn;
   static DefaultOctopusPageBuilder _defaultPageBuilder =
       (context, route, state, node) => MaterialPage<Object?>(
-            key: route.createKey(node),
-            child: InheritedOctopusRoute(
-              node: node,
-              child: route.builder(context, state, node),
-            ),
-            name: node.name,
-            arguments: node.arguments,
-            fullscreenDialog: node.name.endsWith('-dialog'),
-          );
+        key: route.createKey(node),
+        child: InheritedOctopusRoute(
+          node: node,
+          child: route.builder(context, state, node),
+        ),
+        name: node.name,
+        arguments: node.arguments,
+        fullscreenDialog: node.name.endsWith('-dialog'),
+      );
 
   /// Slug of this route.
   /// Should use only alphanumeric characters and dashes.
@@ -774,37 +759,38 @@ mixin OctopusRoute {
   /// If you want to override this method, do not forget to add
   /// [InheritedOctopusRoute] to the element tree.
   Page<Object?> pageBuilder(
-          BuildContext context, OctopusState state, OctopusNode node) =>
-      node.name.endsWith('-dialog')
-          ? OctopusDialogPage(
-              key: createKey(node),
-              builder: (context) => builder(context, state, node),
-              name: node.name,
-              arguments: node.arguments,
-            )
-          : NoAnimationScope.of(context)
-              ? NoAnimationPage<Object?>(
-                  key: createKey(node),
-                  child: InheritedOctopusRoute(
-                    node: node,
-                    child: builder(context, state, node),
-                  ),
-                  name: node.name,
-                  arguments: node.arguments,
-                  fullscreenDialog: node.name.endsWith('-dialog'),
-                )
-              : _defaultPageBuilder.call(context, this, state, node);
+    BuildContext context,
+    OctopusState state,
+    OctopusNode node,
+  ) => node.name.endsWith('-dialog')
+      ? OctopusDialogPage(
+          key: createKey(node),
+          builder: (context) => builder(context, state, node),
+          name: node.name,
+          arguments: node.arguments,
+        )
+      : NoAnimationScope.of(context)
+      ? NoAnimationPage<Object?>(
+          key: createKey(node),
+          child: InheritedOctopusRoute(
+            node: node,
+            child: builder(context, state, node),
+          ),
+          name: node.name,
+          arguments: node.arguments,
+          fullscreenDialog: node.name.endsWith('-dialog'),
+        )
+      : _defaultPageBuilder.call(context, this, state, node);
 
   /// Construct [OctopusNode] for this route.
   OctopusNode$Mutable node({
     Map<String, String>? arguments,
     List<OctopusNode>? children,
-  }) =>
-      OctopusNode$Mutable(
-        name: name,
-        arguments: arguments ?? <String, String>{},
-        children: children ?? <OctopusNode$Mutable>[],
-      );
+  }) => OctopusNode$Mutable(
+    name: name,
+    arguments: arguments ?? <String, String>{},
+    children: children ?? <OctopusNode$Mutable>[],
+  );
 }
 
 /// Base class for all nodes and states.
@@ -839,24 +825,15 @@ abstract base class OctopusNodeBase {
   /// Walks the children of this node.
   ///
   /// Return false to stop the walk.
-  void visitChildNodes(
-    ConditionalNodeVisitor visitor, {
-    bool recursive = true,
-  });
+  void visitChildNodes(ConditionalNodeVisitor visitor, {bool recursive = true});
 
   /// Search element in the current node and its descendants
   /// and get first match or null.
-  OctopusNode? find(
-    ConditionalNodeVisitor test, {
-    bool recursive = true,
-  });
+  OctopusNode? find(ConditionalNodeVisitor test, {bool recursive = true});
 
   /// Search element in the current node and its descendants
   /// and get first match or null by name.
-  OctopusNode? findByName(
-    String name, {
-    bool recursive = true,
-  });
+  OctopusNode? findByName(String name, {bool recursive = true});
 
   /// Search elements by specific path.
   /// For example:
@@ -873,10 +850,7 @@ abstract base class OctopusNodeBase {
   });
 
   /// Search all nodes by specific name.
-  List<OctopusNode> findAllByName(
-    String name, {
-    bool recursive = true,
-  });
+  List<OctopusNode> findAllByName(String name, {bool recursive = true});
 
   /// Walks the children of this node and evaluates [value] on each of them.
   T fold<T>(
@@ -919,26 +893,17 @@ base mixin _OctopusNodeBase$Mutable on OctopusNodeBase {
     bool recursive = true,
   }) {
     OctopusNode$Mutable? result;
-    visitChildNodes(
-      (node) {
-        if (!test(node)) return true;
-        result = node;
-        return false;
-      },
-      recursive: recursive,
-    );
+    visitChildNodes((node) {
+      if (!test(node)) return true;
+      result = node;
+      return false;
+    }, recursive: recursive);
     return result;
   }
 
   @override
-  OctopusNode$Mutable? findByName(
-    String name, {
-    bool recursive = true,
-  }) =>
-      find(
-        (node) => node.name == name,
-        recursive: recursive,
-      );
+  OctopusNode$Mutable? findByName(String name, {bool recursive = true}) =>
+      find((node) => node.name == name, recursive: recursive);
 
   @override
   List<OctopusNode$Mutable>? findByPath(String path) {
@@ -967,13 +932,10 @@ base mixin _OctopusNodeBase$Mutable on OctopusNodeBase {
     bool recursive = true,
   }) {
     final result = <OctopusNode$Mutable>[];
-    visitChildNodes(
-      (node) {
-        if (test(node)) result.add(node);
-        return true;
-      },
-      recursive: recursive,
-    );
+    visitChildNodes((node) {
+      if (test(node)) result.add(node);
+      return true;
+    }, recursive: recursive);
     return result;
   }
 
@@ -981,11 +943,7 @@ base mixin _OctopusNodeBase$Mutable on OctopusNodeBase {
   List<OctopusNode$Mutable> findAllByName(
     String name, {
     bool recursive = true,
-  }) =>
-      findAll(
-        (node) => node.name == name,
-        recursive: recursive,
-      );
+  }) => findAll((node) => node.name == name, recursive: recursive);
 
   @override
   T fold<T>(
@@ -1099,7 +1057,8 @@ base mixin _OctopusNodeBase$Mutable on OctopusNodeBase {
   ///
   /// Returns a list of removed nodes.
   List<OctopusNode$Mutable> removeUntil(
-      bool Function(OctopusNode$Mutable) test) {
+    bool Function(OctopusNode$Mutable) test,
+  ) {
     final result = <OctopusNode$Mutable>[];
     for (var i = children.length - 1; i > -1; i--) {
       final value = children[i];
@@ -1117,16 +1076,17 @@ base mixin _OctopusNodeBase$Mutable on OctopusNodeBase {
   ///
   /// Returns a list of removed nodes.
   List<OctopusNode$Mutable> remove(OctopusNode node) => removeWhere(
-      (n) => n.name == node.name && mapEquals(n.arguments, node.arguments));
+    (n) => n.name == node.name && mapEquals(n.arguments, node.arguments),
+  );
 
   /// Remove all nodes with the same [name] and [arguments].
   ///
   /// Returns a list of removed nodes.
   List<OctopusNode$Mutable> removeAll(List<OctopusNode> nodes) => removeWhere(
-        (a) => nodes.any(
-          (b) => a.name == b.name && mapEquals(a.arguments, b.arguments),
-        ),
-      );
+    (a) => nodes.any(
+      (b) => a.name == b.name && mapEquals(a.arguments, b.arguments),
+    ),
+  );
 
   /// Remove node by the [name].
   ///
@@ -1160,7 +1120,9 @@ base mixin _OctopusNodeBase$Mutable on OctopusNodeBase {
 
   /// Look up the node with [name], or add a new node if it isn't there.
   OctopusNode$Mutable putIfAbsent(
-      String name, OctopusNode Function() ifAbsent) {
+    String name,
+    OctopusNode Function() ifAbsent,
+  ) {
     var node = children.firstWhereOrNull((node) => node.name == name);
     if (node != null) return node;
     node = ifAbsent().mutate();
@@ -1206,22 +1168,16 @@ base mixin _OctopusNodeBase$Immutable on OctopusNodeBase {
     bool recursive = true,
   }) {
     OctopusNode$Immutable? result;
-    visitChildNodes(
-      (node) {
-        if (!test(node)) return true;
-        result = node;
-        return false;
-      },
-      recursive: recursive,
-    );
+    visitChildNodes((node) {
+      if (!test(node)) return true;
+      result = node;
+      return false;
+    }, recursive: recursive);
     return result;
   }
 
   @override
-  OctopusNode$Immutable? findByName(
-    String name, {
-    bool recursive = true,
-  }) =>
+  OctopusNode$Immutable? findByName(String name, {bool recursive = true}) =>
       find((node) => node.name == name, recursive: recursive);
 
   @override
@@ -1251,13 +1207,10 @@ base mixin _OctopusNodeBase$Immutable on OctopusNodeBase {
     bool recursive = true,
   }) {
     final result = <OctopusNode$Immutable>[];
-    visitChildNodes(
-      (node) {
-        if (test(node)) result.add(node);
-        return true;
-      },
-      recursive: recursive,
-    );
+    visitChildNodes((node) {
+      if (test(node)) result.add(node);
+      return true;
+    }, recursive: recursive);
     return result;
   }
 
@@ -1265,11 +1218,7 @@ base mixin _OctopusNodeBase$Immutable on OctopusNodeBase {
   List<OctopusNode$Immutable> findAllByName(
     String name, {
     bool recursive = true,
-  }) =>
-      findAll(
-        (node) => node.name == name,
-        recursive: recursive,
-      );
+  }) => findAll((node) => node.name == name, recursive: recursive);
 
   @override
   T fold<T>(
@@ -1292,33 +1241,36 @@ base mixin _OctopusNodeBase$Immutable on OctopusNodeBase {
 /// If the state is already frozen, it is returned unchanged.
 OctopusState$Immutable _freezeState(OctopusState state) =>
     state is OctopusState$Immutable
-        ? state
-        : OctopusState$Immutable._(
-            children: List<OctopusNode$Immutable>.unmodifiable(
-                state.children.map<OctopusNode$Immutable>(_freezeNode)),
-            arguments: _freezeArguments(state.arguments),
-            intention: state.intention,
-          );
+    ? state
+    : OctopusState$Immutable._(
+        children: List<OctopusNode$Immutable>.unmodifiable(
+          state.children.map<OctopusNode$Immutable>(_freezeNode),
+        ),
+        arguments: _freezeArguments(state.arguments),
+        intention: state.intention,
+      );
 
 /// Freezes the given [node].
 /// If the node is already frozen, it is returned unchanged.
 OctopusNode$Immutable _freezeNode(OctopusNode node) =>
     node is OctopusNode$Immutable
-        ? node
-        : OctopusNode$Immutable._(
-            name: node.name,
-            children: List<OctopusNode$Immutable>.unmodifiable(
-                node.children.map<OctopusNode$Immutable>(_freezeNode)),
-            arguments: _freezeArguments(node.arguments),
-          );
+    ? node
+    : OctopusNode$Immutable._(
+        name: node.name,
+        children: List<OctopusNode$Immutable>.unmodifiable(
+          node.children.map<OctopusNode$Immutable>(_freezeNode),
+        ),
+        arguments: _freezeArguments(node.arguments),
+      );
 
 /// Freezes the given [nodes].
 /// If the list already contains only frozen nodes, it is returned unchanged.
 List<OctopusNode$Immutable> _freezeNodes(List<OctopusNode> nodes) =>
     nodes is List<OctopusNode$Immutable>
-        ? nodes
-        : List<OctopusNode$Immutable>.unmodifiable(
-            nodes.map<OctopusNode$Immutable>(_freezeNode));
+    ? nodes
+    : List<OctopusNode$Immutable>.unmodifiable(
+        nodes.map<OctopusNode$Immutable>(_freezeNode),
+      );
 
 /// Returns a mutable copy of the given [nodes].
 List<OctopusNode$Mutable> _mutableNodes(List<OctopusNode> nodes) =>
@@ -1333,7 +1285,7 @@ Map<String, String> _freezeArguments(Map<String, String> arguments) {
   );
   final entries = arguments.entries.toList(growable: false)
     ..sort((a, b) => a.key.compareTo(b.key));
-  return Map<String, String>.unmodifiable(
-    <String, String>{for (final entry in entries) entry.key: entry.value},
-  );
+  return Map<String, String>.unmodifiable(<String, String>{
+    for (final entry in entries) entry.key: entry.value,
+  });
 }

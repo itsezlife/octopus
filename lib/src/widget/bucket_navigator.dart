@@ -48,7 +48,7 @@ class BucketNavigator extends StatefulWidget {
 
   /// Override the default back button behavior logic.
   final Future<bool> Function(BuildContext context, NavigatorState navigator)?
-      onBackButtonPressed;
+  onBackButtonPressed;
 
   /// The delegate that decides how the route transition animation should
   /// look like.
@@ -118,8 +118,10 @@ class _BucketNavigatorState extends State<BucketNavigator>
   Widget build(BuildContext context) {
     final node = _node;
     if (node == null || !node.hasChildren) return const SizedBox.shrink();
-    final pages =
-        _router.config.routerDelegate.buildPages(context, node.children);
+    final pages = _router.config.routerDelegate.buildPages(
+      context,
+      node.children,
+    );
     if (pages.isEmpty) return const SizedBox.shrink();
     return InheritedOctopusRoute(
       node: node,
@@ -127,11 +129,9 @@ class _BucketNavigatorState extends State<BucketNavigator>
         router: _router,
         restorationScopeId: widget.restorationScopeId,
         reportsRouteUpdateToEngine: false,
-        observers: <NavigatorObserver>[
-          _navigatorObserver,
-          ...widget.observers,
-        ],
-        transitionDelegate: widget.transitionDelegate ??
+        observers: <NavigatorObserver>[_navigatorObserver, ...widget.observers],
+        transitionDelegate:
+            widget.transitionDelegate ??
             (NoAnimationScope.of(context)
                 ? const NoAnimationTransitionDelegate<Object?>()
                 : const DefaultTransitionDelegate<Object?>()),
@@ -145,15 +145,13 @@ class _BucketNavigatorState extends State<BucketNavigator>
     final node = _node;
     if (node == null) return;
     if (node.children.length < 2) return;
-    _router.setState(
-      (state) {
-        final node = state.findByName(widget.bucket);
-        if (node == null || node.children.length < 2)
-          return state..intention = OctopusStateIntention.cancel;
-        node.removeLast();
-        return state;
-      },
-    );
+    _router.setState((state) {
+      final node = state.findByName(widget.bucket);
+      if (node == null || node.children.length < 2)
+        return state..intention = OctopusStateIntention.cancel;
+      node.removeLast();
+      return state;
+    });
   }
 
   @override
@@ -192,8 +190,8 @@ mixin _BackButtonBucketNavigatorStateMixin on State<BucketNavigator> {
   void initState() {
     super.initState();
     _bbRouter = context.octopus;
-    _bbDispatcher =
-        _bbRouter.config.backButtonDispatcher.createChildBackButtonDispatcher();
+    _bbDispatcher = _bbRouter.config.backButtonDispatcher
+        .createChildBackButtonDispatcher();
     _bbRouter.observer.addListener(_checkPriority);
     _checkPriority();
   }

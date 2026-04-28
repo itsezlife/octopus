@@ -8,17 +8,15 @@ import 'package:octopus/src/state/state.dart';
 final class OctopusStateObserver$NavigatorImpl
     with ChangeNotifier
     implements OctopusStateObserver {
-  OctopusStateObserver$NavigatorImpl(OctopusState$Immutable initialState,
-      [List<OctopusHistoryEntry>? history])
-      : _value = OctopusState$Immutable.from(initialState),
-        _history = history?.toSet().toList() ?? <OctopusHistoryEntry>[] {
+  OctopusStateObserver$NavigatorImpl(
+    OctopusState$Immutable initialState, [
+    List<OctopusHistoryEntry>? history,
+  ]) : _value = OctopusState$Immutable.from(initialState),
+       _history = history?.toSet().toList() ?? <OctopusHistoryEntry>[] {
     // Add the initial state to the history.
     if (_history.isEmpty || _history.last.state != initialState) {
       _history.add(
-        OctopusHistoryEntry(
-          state: initialState,
-          timestamp: DateTime.now(),
-        ),
+        OctopusHistoryEntry(state: initialState, timestamp: DateTime.now()),
       );
     }
     _history.sort();

@@ -5,8 +5,8 @@ import 'package:meta/meta.dart';
 class $NodeExtraStorage {
   factory $NodeExtraStorage() => _internalSingleton;
   $NodeExtraStorage._internal() : _storage = <String, Map<String, Object?>?>{};
-  static final $NodeExtraStorage _internalSingleton =
-      $NodeExtraStorage._internal();
+  static final $NodeExtraStorage _internalSingleton = $NodeExtraStorage
+      ._internal();
 
   final Map<String, Map<String, Object?>?> _storage;
 

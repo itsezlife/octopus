@@ -23,9 +23,9 @@ final class OctopusInformationProvider$JS extends OctopusInformationProvider {
     required RouteInformation valueInEngine,
     required RouteInformation value,
     super.refreshListenable,
-  })  : _value = value,
-        _valueInEngine = valueInEngine,
-        _history = <RouteInformation>[value];
+  }) : _value = value,
+       _valueInEngine = valueInEngine,
+       _history = <RouteInformation>[value];
 
   @override
   void routerReportsNewRouteInformation(
@@ -103,11 +103,15 @@ final class OctopusInformationProvider$JS extends OctopusInformationProvider {
 
     if (replace) {
       SystemNavigatorUtil.replaceState(
-          data: routeInformation.state, url: routeInformation.uri);
+        data: routeInformation.state,
+        url: routeInformation.uri,
+      );
       _history.last = routeInformation;
     } else {
       SystemNavigatorUtil.pushState(
-          data: routeInformation.state, url: routeInformation.uri);
+        data: routeInformation.state,
+        url: routeInformation.uri,
+      );
       _history.add(routeInformation);
     }
     value = _valueInEngine = routeInformation;
@@ -147,9 +151,10 @@ final class OctopusInformationProvider$JS extends OctopusInformationProvider {
   @override
   Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
     assert(
-        hasListeners,
-        'A OctopusInformationProvider must have '
-        'at least one listener before it can be used.');
+      hasListeners,
+      'A OctopusInformationProvider must have '
+      'at least one listener before it can be used.',
+    );
     return SynchronousFuture<bool>(pushRoute(routeInformation));
   }
 
@@ -157,9 +162,10 @@ final class OctopusInformationProvider$JS extends OctopusInformationProvider {
   @Deprecated('Use didPushRouteInformation instead')
   Future<bool> didPushRoute(String route) {
     assert(
-        hasListeners,
-        'A OctopusInformationProvider must have '
-        'at least one listener before it can be used.');
+      hasListeners,
+      'A OctopusInformationProvider must have '
+      'at least one listener before it can be used.',
+    );
     return SynchronousFuture<bool>(
       pushRoute(RouteInformation(uri: Uri.tryParse(route))),
     );

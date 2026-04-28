@@ -89,78 +89,69 @@ class _OctopusToolsState extends State<OctopusTools>
   }
 
   Widget _materialContext({required Widget child}) => /* AnimatedTheme */ Theme(
-        data: ThemeData.dark(),
-        /* duration: const Duration(milliseconds: 350),
+    data: ThemeData.dark(),
+    /* duration: const Duration(milliseconds: 350),
         curve: Curves.easeInOut, */
-        child: Row(
-          children: <Widget>[
-            // Tools
-            Expanded(
-              child: Visibility(
-                visible: !dismissed,
-                maintainState: true,
-                maintainAnimation: false,
-                maintainSize: false,
-                maintainInteractivity: false,
-                maintainSemantics: false,
-                child: Material(
-                  elevation: 0,
-                  child: DefaultSelectionStyle(
-                    child: ScaffoldMessenger(
-                      child: HeroControllerScope.none(
-                        child: Navigator(
-                          pages: <Page<void>>[
-                            MaterialPage<void>(
-                              child: Scaffold(
-                                body: SafeArea(
-                                  child: child,
-                                ),
-                              ),
-                            ),
-                          ],
-                          onDidRemovePage: (page) {},
+    child: Row(
+      children: <Widget>[
+        // Tools
+        Expanded(
+          child: Visibility(
+            visible: !dismissed,
+            maintainState: true,
+            maintainAnimation: false,
+            maintainSize: false,
+            maintainInteractivity: false,
+            maintainSemantics: false,
+            child: Material(
+              elevation: 0,
+              child: DefaultSelectionStyle(
+                child: ScaffoldMessenger(
+                  child: HeroControllerScope.none(
+                    child: Navigator(
+                      pages: <Page<void>>[
+                        MaterialPage<void>(
+                          child: Scaffold(body: SafeArea(child: child)),
                         ),
-                      ),
+                      ],
+                      onDidRemovePage: (page) {},
                     ),
                   ),
                 ),
               ),
             ),
-            // Handle
-            SizedBox(
-              width: handleWidth,
-              height: 64,
-              child: Material(
-                borderRadius: const BorderRadius.horizontal(
-                  right: Radius.circular(16),
-                ),
-                elevation: 0,
-                child: InkWell(
-                  onTap: () => _controller.toggle(),
-                  borderRadius: const BorderRadius.horizontal(
-                    right: Radius.circular(16),
-                  ),
-                  child: Center(
-                    child: RotationTransition(
-                      turns: _controller.drive(
-                        Tween<double>(
-                          begin: 0,
-                          end: 0.5,
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.chevron_right,
-                        color: Colors.white,
-                        size: 16,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
-      );
+        // Handle
+        SizedBox(
+          width: handleWidth,
+          height: 64,
+          child: Material(
+            borderRadius: const BorderRadius.horizontal(
+              right: Radius.circular(16),
+            ),
+            elevation: 0,
+            child: InkWell(
+              onTap: () => _controller.toggle(),
+              borderRadius: const BorderRadius.horizontal(
+                right: Radius.circular(16),
+              ),
+              child: Center(
+                child: RotationTransition(
+                  turns: _controller.drive(Tween<double>(begin: 0, end: 0.5)),
+                  child: const Icon(
+                    Icons.chevron_right,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 
   @override
   Widget build(BuildContext context) => !widget.enable
@@ -228,11 +219,7 @@ class _OctopusToolsController extends AnimationController {
     required super.vsync,
     Duration duration = const Duration(milliseconds: 250),
     super.value, // ignore: unused_element
-  }) : super(
-          lowerBound: 0,
-          upperBound: 1,
-          duration: duration,
-        );
+  }) : super(lowerBound: 0, upperBound: 1, duration: duration);
 
   TickerFuture show() => forward();
 
@@ -253,9 +240,7 @@ class _OctopusToolsController extends AnimationController {
 }
 
 class _OctopusTools$Tabs extends StatelessWidget {
-  const _OctopusTools$Tabs({
-    required this.octopus,
-  });
+  const _OctopusTools$Tabs({required this.octopus});
 
   final Octopus octopus;
 
@@ -276,16 +261,18 @@ class _OctopusTools$Tabs extends StatelessWidget {
                 Tab(
                   icon: Icon(
                     Icons.navigation,
-                    color:
-                        controller.index == 0 ? Colors.green : Colors.blueGrey,
+                    color: controller.index == 0
+                        ? Colors.green
+                        : Colors.blueGrey,
                   ),
                   text: 'State',
                 ),
                 Tab(
                   icon: Icon(
                     Icons.history,
-                    color:
-                        controller.index == 1 ? Colors.blue : Colors.blueGrey,
+                    color: controller.index == 1
+                        ? Colors.blue
+                        : Colors.blueGrey,
                   ),
                   text: 'History',
                 ),
@@ -295,12 +282,8 @@ class _OctopusTools$Tabs extends StatelessWidget {
           Expanded(
             child: TabBarView(
               children: <Widget>[
-                _OctopusTools$Tabs$Tree(
-                  observer: octopus.observer,
-                ),
-                _OctopusTools$Tabs$History(
-                  octopus: octopus,
-                ),
+                _OctopusTools$Tabs$Tree(observer: octopus.observer),
+                _OctopusTools$Tabs$History(octopus: octopus),
               ],
             ),
           ),
@@ -311,96 +294,84 @@ class _OctopusTools$Tabs extends StatelessWidget {
 }
 
 class _OctopusTools$Tabs$Tree extends StatelessWidget {
-  const _OctopusTools$Tabs$Tree({
-    required this.observer,
-  });
+  const _OctopusTools$Tabs$Tree({required this.observer});
 
   final OctopusStateObserver observer;
 
   @override
   Widget build(BuildContext context) => ValueListenableBuilder<OctopusState>(
-        valueListenable: observer,
-        builder: (context, state, child) => Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(8),
-                scrollDirection: Axis.vertical,
-                child: Text(
-                  state.toString(),
-                  style: const TextStyle(
-                    overflow: TextOverflow.clip,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
+    valueListenable: observer,
+    builder: (context, state, child) => Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(8),
+            scrollDirection: Axis.vertical,
+            child: Text(
+              state.toString(),
+              style: const TextStyle(overflow: TextOverflow.clip, fontSize: 12),
             ),
-            const _OctopusTools$Tabs$Tree$Divider('State Arguments'),
-            SizedBox(
-              height: math.min(128, state.arguments.length * 24 + 72),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                padding: const EdgeInsets.all(8),
-                child: Column(
-                  children: <Widget>[
-                    for (final arg in state.arguments.entries)
-                      SizedBox(
-                        height: 18,
-                        child: Row(
-                          children: [
-                            SizedBox(
-                              width: 64,
-                              child: Text(
-                                '${arg.key}:',
-                                maxLines: 1,
-                                textAlign: TextAlign.right,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                arg.value,
-                                maxLines: 1,
-                                textAlign: TextAlign.left,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-            const _OctopusTools$Tabs$Tree$Divider('State Intention'),
-            SizedBox(
-              height: 24,
-              child: Center(
-                child: Text(
-                  state.intention.name.toUpperCase(),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-          ],
+          ),
         ),
-      );
+        const _OctopusTools$Tabs$Tree$Divider('State Arguments'),
+        SizedBox(
+          height: math.min(128, state.arguments.length * 24 + 72),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              children: <Widget>[
+                for (final arg in state.arguments.entries)
+                  SizedBox(
+                    height: 18,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 64,
+                          child: Text(
+                            '${arg.key}:',
+                            maxLines: 1,
+                            textAlign: TextAlign.right,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            arg.value,
+                            maxLines: 1,
+                            textAlign: TextAlign.left,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        const _OctopusTools$Tabs$Tree$Divider('State Intention'),
+        SizedBox(
+          height: 24,
+          child: Center(
+            child: Text(
+              state.intention.name.toUpperCase(),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+      ],
+    ),
+  );
 }
 
 class _OctopusTools$Tabs$Tree$Divider extends StatelessWidget {
@@ -410,41 +381,22 @@ class _OctopusTools$Tabs$Tree$Divider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          const SizedBox(
-            width: 24,
-            child: Divider(
-              height: 1,
-              thickness: 1,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontSize: 12,
-              ),
-            ),
-          ),
-          const Expanded(
-            flex: 1,
-            child: Divider(
-              height: 1,
-              thickness: 1,
-            ),
-          ),
-        ],
-      );
+    mainAxisSize: MainAxisSize.max,
+    mainAxisAlignment: MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: <Widget>[
+      const SizedBox(width: 24, child: Divider(height: 1, thickness: 1)),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: Text(label, style: const TextStyle(fontSize: 12)),
+      ),
+      const Expanded(flex: 1, child: Divider(height: 1, thickness: 1)),
+    ],
+  );
 }
 
 class _OctopusTools$Tabs$History extends StatefulWidget {
-  const _OctopusTools$Tabs$History({
-    required this.octopus,
-  });
+  const _OctopusTools$Tabs$History({required this.octopus});
 
   final Octopus octopus;
 
@@ -495,44 +447,41 @@ class _OctopusTools$Tabs$HistoryState
 
   @override
   Widget build(BuildContext context) => ListView.builder(
-        /* physics: const NeverScrollableScrollPhysics(), */
-        controller: scrollController,
-        itemCount: history.length,
-        itemExtent: 24,
-        scrollDirection: Axis.vertical,
-        reverse: true,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        itemBuilder: (context, index) {
-          final entry = history[index];
-          final state = entry.state;
-          final location = state.location;
-          return SizedBox(
-            height: 24,
-            child: Tooltip(
-              message: location,
-              child: InkWell(
-                key: ValueKey<int>(entry.hashCode),
-                onTap: index == history.length - 1
-                    ? null
-                    : () => widget.octopus.setState((_) => state),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      location,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        height: 1,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
+    /* physics: const NeverScrollableScrollPhysics(), */
+    controller: scrollController,
+    itemCount: history.length,
+    itemExtent: 24,
+    scrollDirection: Axis.vertical,
+    reverse: true,
+    padding: const EdgeInsets.symmetric(vertical: 16),
+    itemBuilder: (context, index) {
+      final entry = history[index];
+      final state = entry.state;
+      final location = state.location;
+      return SizedBox(
+        height: 24,
+        child: Tooltip(
+          message: location,
+          child: InkWell(
+            key: ValueKey<int>(entry.hashCode),
+            onTap: index == history.length - 1
+                ? null
+                : () => widget.octopus.setState((_) => state),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  location,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(height: 1, fontSize: 12),
                 ),
               ),
             ),
-          );
-        },
+          ),
+        ),
       );
+    },
+  );
 }

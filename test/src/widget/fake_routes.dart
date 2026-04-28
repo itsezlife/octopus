@@ -18,29 +18,26 @@ enum FakeRoutes with OctopusRoute {
   final String? title;
 
   @override
-  Widget builder(BuildContext context, OctopusState state, OctopusNode node) =>
-      switch (this) {
-        FakeRoutes.home => FakeScreen(
-            FakeRoutes.home,
-            arguments: node.arguments,
-          ),
-        FakeRoutes.shop => FakeScreen(
-            FakeRoutes.shop,
-            arguments: node.arguments,
-          ),
-        FakeRoutes.category => FakeScreen(
-            FakeRoutes.category,
-            arguments: node.arguments,
-          ),
-        FakeRoutes.product => FakeScreen(
-            FakeRoutes.product,
-            arguments: node.arguments,
-          ),
-        FakeRoutes.profile => FakeScreen(
-            FakeRoutes.profile,
-            arguments: node.arguments,
-          ),
-      };
+  Widget builder(
+    BuildContext context,
+    OctopusState state,
+    OctopusNode node,
+  ) => switch (this) {
+    FakeRoutes.home => FakeScreen(FakeRoutes.home, arguments: node.arguments),
+    FakeRoutes.shop => FakeScreen(FakeRoutes.shop, arguments: node.arguments),
+    FakeRoutes.category => FakeScreen(
+      FakeRoutes.category,
+      arguments: node.arguments,
+    ),
+    FakeRoutes.product => FakeScreen(
+      FakeRoutes.product,
+      arguments: node.arguments,
+    ),
+    FakeRoutes.profile => FakeScreen(
+      FakeRoutes.profile,
+      arguments: node.arguments,
+    ),
+  };
 }
 
 /// FakeScreen widget for testing.
@@ -59,11 +56,7 @@ class FakeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(route.title ?? route.name)),
-        body: const SafeArea(
-          child: Center(
-            child: SizedBox.shrink(),
-          ),
-        ),
-      );
+    appBar: AppBar(title: Text(route.title ?? route.name)),
+    body: const SafeArea(child: Center(child: SizedBox.shrink())),
+  );
 }

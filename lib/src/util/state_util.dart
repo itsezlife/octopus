@@ -57,14 +57,16 @@ abstract final class StateUtil {
           if (node.arguments.isEmpty) {
             name = node.name;
           } else {
-            final args = (node.arguments.entries.toList(growable: false)
-                  ..sort((a, b) => a.key.compareTo(b.key)))
-                .map<String>(
-                  (e) => '${Uri.encodeComponent(e.key)}'
-                      '='
-                      '${Uri.encodeComponent(e.value)}',
-                )
-                .join('&');
+            final args =
+                (node.arguments.entries.toList(growable: false)
+                      ..sort((a, b) => a.key.compareTo(b.key)))
+                    .map<String>(
+                      (e) =>
+                          '${Uri.encodeComponent(e.key)}'
+                          '='
+                          '${Uri.encodeComponent(e.value)}',
+                    )
+                    .join('&');
             name = args.isEmpty ? node.name : '${node.name}~$args';
           }
 
@@ -135,32 +137,29 @@ abstract final class StateUtil {
   static OctopusState$Mutable decodeLocation(String location) =>
       stateFromUri(Uri.parse(location));
 
-  static OctopusState$Mutable stateFromUri(Uri uri) => measureSync(
-        'stateFromUri',
-        () {
-          final queryParameters = uri.queryParameters.entries
-              .toList(growable: false)
-            ..sort((a, b) => a.key.compareTo(b.key));
-          final arguments = <String, String>{
-            for (final entry in queryParameters) entry.key: entry.value
-          };
-          final segments = uri.pathSegments;
-          if (segments.isEmpty) {
-            return OctopusState$Mutable(
-              children: <OctopusNode$Mutable>[],
-              arguments: arguments,
-              intention: OctopusStateIntention.auto,
-            );
-          } else {
-            return OctopusState$Mutable(
-              children: _parseSegments(segments.toList(), 0).toList(),
-              arguments: arguments,
-              intention: OctopusStateIntention.auto,
-            );
-          }
-        },
-        arguments: kMeasureEnabled ? {'uri': uri.toString()} : null,
-      );
+  static OctopusState$Mutable stateFromUri(Uri uri) =>
+      measureSync('stateFromUri', () {
+        final queryParameters = uri.queryParameters.entries.toList(
+          growable: false,
+        )..sort((a, b) => a.key.compareTo(b.key));
+        final arguments = <String, String>{
+          for (final entry in queryParameters) entry.key: entry.value,
+        };
+        final segments = uri.pathSegments;
+        if (segments.isEmpty) {
+          return OctopusState$Mutable(
+            children: <OctopusNode$Mutable>[],
+            arguments: arguments,
+            intention: OctopusStateIntention.auto,
+          );
+        } else {
+          return OctopusState$Mutable(
+            children: _parseSegments(segments.toList(), 0).toList(),
+            arguments: arguments,
+            intention: OctopusStateIntention.auto,
+          );
+        }
+      }, arguments: kMeasureEnabled ? {'uri': uri.toString()} : null);
 
   /// Represent state as string tree.
   @internal
@@ -181,17 +180,9 @@ abstract final class StateUtil {
             var child = node.children[i];
             var isLast = i == node.children.length - 1;
             if (isLast) {
-              add(
-                child,
-                '$childPrefix└─',
-                '$childPrefix  ',
-              );
+              add(child, '$childPrefix└─', '$childPrefix  ');
             } else {
-              add(
-                child,
-                '$childPrefix├─',
-                '$childPrefix│ ',
-              );
+              add(child, '$childPrefix├─', '$childPrefix│ ');
             }
           }
         }
@@ -221,8 +212,9 @@ abstract final class StateUtil {
 
         segment = segment.substring(currentDepth);
         final delimiter = segment.indexOf('~');
-        final name =
-            delimiter == -1 ? segment : segment.substring(0, delimiter);
+        final name = delimiter == -1
+            ? segment
+            : segment.substring(0, delimiter);
 
         if (name.isEmpty || !name.contains($nameRegExp)) {
           assert(false, 'Invalid route name: "$name"');
@@ -235,8 +227,10 @@ abstract final class StateUtil {
         } else {
           final query = segment.substring(delimiter + 1);
           final queurySegments = query.split('&');
-          final queryParameters =
-              queurySegments.fold(<String, String>{}, (result, element) {
+          final queryParameters = queurySegments.fold(<String, String>{}, (
+            result,
+            element,
+          ) {
             try {
               if (element.length < 2) return result;
               final index = element.indexOf('=');
@@ -267,7 +261,7 @@ abstract final class StateUtil {
           final entries = queryParameters.entries.toList(growable: false)
             ..sort((a, b) => a.key.compareTo(b.key));
           arguments = <String, String>{
-            for (final entry in entries) entry.key: entry.value
+            for (final entry in entries) entry.key: entry.value,
           };
         }
         var children = currentDepth < segment.length - 1
@@ -319,12 +313,13 @@ abstract final class StateUtil {
 
           // Exclude arguments with invalid keys.
           var arguments = node.arguments;
-          if (arguments.keys
-              .any((key) => key.isEmpty || !key.contains($nameRegExp))) {
+          if (arguments.keys.any(
+            (key) => key.isEmpty || !key.contains($nameRegExp),
+          )) {
             arguments = <String, String>{
               for (final entry in arguments.entries)
                 if (entry.key.isNotEmpty && entry.key.contains($nameRegExp))
-                  entry.key: entry.value
+                  entry.key: entry.value,
             };
           }
 
@@ -348,12 +343,13 @@ abstract final class StateUtil {
 
           // Exclude arguments with invalid keys.
           var arguments = node.arguments;
-          if (arguments.keys
-              .any((key) => key.isEmpty || !key.contains($nameRegExp))) {
+          if (arguments.keys.any(
+            (key) => key.isEmpty || !key.contains($nameRegExp),
+          )) {
             arguments = <String, String>{
               for (final entry in arguments.entries)
                 if (entry.key.isNotEmpty && entry.key.contains($nameRegExp))
-                  entry.key: entry.value
+                  entry.key: entry.value,
             };
           }
 
@@ -410,11 +406,13 @@ abstract final class StateUtil {
     OctopusNode? result;
     var candidates = state.children;
     for (final node in path) {
-      candidates =
-          candidates.where((e) => e.name == node.name).toList(growable: false);
+      candidates = candidates
+          .where((e) => e.name == node.name)
+          .toList(growable: false);
       if (candidates.length > 1) {
-        candidates =
-            candidates.where((e) => e.key == node.key).toList(growable: false);
+        candidates = candidates
+            .where((e) => e.key == node.key)
+            .toList(growable: false);
       }
       if (candidates.length != 1) return null; // Not found.
       result = candidates.single;

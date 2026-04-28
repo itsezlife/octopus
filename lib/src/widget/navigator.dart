@@ -36,7 +36,7 @@ class _OctopusNavigatorState extends NavigatorState {}
 
 class _OctopusNavigatorContext extends StatefulElement {
   _OctopusNavigatorContext(OctopusNavigator super.widget)
-      : router = widget._router;
+    : router = widget._router;
 
   @override
   OctopusNavigator get widget => super.widget as OctopusNavigator;

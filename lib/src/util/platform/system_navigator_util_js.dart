@@ -24,11 +24,7 @@ void $pushState(Object? data, String? title, Uri? url) {
 
 /// Replace state.
 @internal
-void $replaceState(
-  Object? data,
-  String? title,
-  Uri? url,
-) {
+void $replaceState(Object? data, String? title, Uri? url) {
   fine('replaceState($url)');
   SystemNavigator.selectMultiEntryHistory().ignore();
   //SystemNavigator.selectSingleEntryHistory().ignore();

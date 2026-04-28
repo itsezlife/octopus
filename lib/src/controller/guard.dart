@@ -63,8 +63,7 @@ abstract class OctopusGuard with ChangeNotifier implements IOctopusGuard {
     List<OctopusHistoryEntry> history,
     OctopusState$Mutable state,
     Map<String, Object?> context,
-  ) =>
-      state;
+  ) => state;
 
   @override
   void dispose() {

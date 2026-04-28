@@ -1,5 +1,6 @@
 name: octopus
-description: "A cross-platform declarative router for Flutter with a focus on state and nested navigation. Made with ❤️ by PlugFox."
+description: "A cross-platform declarative router for Flutter with a focus on
+  state and nested navigation. Made with ❤️ by PlugFox."
 
 version: 0.0.10
 
@@ -29,12 +30,12 @@ platforms:
   web:
   windows:
 
-#screenshots:
-#  - description: 'Example of using the ws library to connect to a WebSocket server.'
-#    path: example.png
+    #screenshots:
+    #  - description: 'Example of using the ws library to connect to a WebSocket server.'
+    #    path: example.png
 
 environment:
-  sdk: '>=3.4.0 <4.0.0'
+  sdk: ">=3.9.0 <4.0.0"
   flutter: ">=3.24.0"
 
 dependencies:

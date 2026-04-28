@@ -40,19 +40,20 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
     NotFoundBuilder? notFound,
     void Function(Object error, StackTrace stackTrace)? onError,
     OctopusDuplicateStrategy? duplicateStrategy,
-  })  : _observer = observer,
-        _defaultRoute = defaultRoute,
-        _guards = guards?.toList(growable: false) ?? <IOctopusGuard>[],
-        _restorationScopeId = restorationScopeId,
-        _observers = observers,
-        _transitionDelegate = transitionDelegate ??
-            (kIsWeb
-                ? const NoAnimationTransitionDelegate<Object?>()
-                : const DefaultTransitionDelegate<Object?>()),
-        _notFound = notFound,
-        _onError = onError,
-        _duplicateStrategy =
-            duplicateStrategy ?? OctopusDuplicateStrategy.remove {
+  }) : _observer = observer,
+       _defaultRoute = defaultRoute,
+       _guards = guards?.toList(growable: false) ?? <IOctopusGuard>[],
+       _restorationScopeId = restorationScopeId,
+       _observers = observers,
+       _transitionDelegate =
+           transitionDelegate ??
+           (kIsWeb
+               ? const NoAnimationTransitionDelegate<Object?>()
+               : const DefaultTransitionDelegate<Object?>()),
+       _notFound = notFound,
+       _onError = onError,
+       _duplicateStrategy =
+           duplicateStrategy ?? OctopusDuplicateStrategy.remove {
     // Subscribe to the guards.
     _guardsListener = Listenable.merge(_guards)..addListener(_onGuardsNotified);
     // Revalidate the initial state with the guards.
@@ -144,10 +145,7 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
         router: $octopus.target!,
         restorationScopeId: _restorationScopeId,
         reportsRouteUpdateToEngine: false,
-        observers: <NavigatorObserver>[
-          _modalObserver,
-          ...?_observers,
-        ],
+        observers: <NavigatorObserver>[_modalObserver, ...?_observers],
         transitionDelegate: _transitionDelegate,
         pages: pages,
         onDidRemovePage: _onDidRemovePage,
@@ -156,160 +154,149 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
     );
   }
 
-  void _onDidRemovePage(Page<Object?> page) => _handleErrors(
-        () {
-          final state = _observer.value.mutate();
-          if (state.children.isEmpty) return;
-          state.children.removeLast();
-          setNewRoutePath(state);
-        },
-        (_, __) {},
-      );
+  void _onDidRemovePage(Page<Object?> page) => _handleErrors(() {
+    final state = _observer.value.mutate();
+    if (state.children.isEmpty) return;
+    state.children.removeLast();
+    setNewRoutePath(state);
+  }, (_, __) {});
 
   @override
   @internal
   List<Page<Object?>> buildPages(
-          BuildContext context, List<OctopusNode> nodes) =>
-      _handleErrors(
-        () => measureSync(
-          'buildPagesFromNodes',
-          () {
-            final pages = <Page<Object?>>[];
-            // Build pages
-            for (final node in nodes) {
-              try {
-                // If the node is a dialog, then build the dialog page
-                if (node.name == _kDialogNodeName) {
-                  final key = node.arguments['k'];
-                  if (key == null) continue;
-                  final page = _dialogBuilders[key];
-                  if (page == null) continue;
-                  pages.add(page);
-                  continue;
-                }
-                // Build the page
-                final Page<Object?> page;
-                final route = routes[node.name];
-                if (route == null) {
-                  final notFound = _notFound;
-                  if (notFound != null) {
-                    page = MaterialPage(
-                      child: notFound.call(
-                        context,
-                        node.name,
-                        node.arguments,
-                      ),
-                      arguments: node.arguments,
-                    );
-                  } else {
-                    _onError?.call(
-                      Exception('Unknown route ${node.name}'),
-                      StackTrace.current,
-                    );
-                    continue;
-                  }
-                } else {
-                  page = route.pageBuilder(context, currentConfiguration, node);
-                }
-                pages.add(page);
-              } on Object catch (error, stackTrace) {
-                developer.log(
-                  'Failed to build page',
-                  name: 'octopus',
-                  error: error,
-                  stackTrace: stackTrace,
-                  level: 1000,
-                );
-                _onError?.call(error, stackTrace);
-              }
+    BuildContext context,
+    List<OctopusNode> nodes,
+  ) => _handleErrors(
+    () => measureSync(
+      'buildPagesFromNodes',
+      () {
+        final pages = <Page<Object?>>[];
+        // Build pages
+        for (final node in nodes) {
+          try {
+            // If the node is a dialog, then build the dialog page
+            if (node.name == _kDialogNodeName) {
+              final key = node.arguments['k'];
+              if (key == null) continue;
+              final page = _dialogBuilders[key];
+              if (page == null) continue;
+              pages.add(page);
+              continue;
             }
-            if (pages.isNotEmpty) return pages;
-            return <Page<Object?>>[];
-          },
-          arguments: kMeasureEnabled
-              ? <String, String>{
-                  'nodes': nodes.map<String>((e) => e.name).join(', ')
-                }
-              : null,
-        ),
-        (error, stackTrace) {
-          developer.log(
-            'Failed to build pages',
-            name: 'octopus',
-            error: error,
-            stackTrace: stackTrace,
-            level: 1000,
-          );
-          final flutterError = switch (error) {
-            FlutterError error => error,
-            String message => FlutterError(message),
-            _ => FlutterError.fromParts(
-                <DiagnosticsNode>[
-                  ErrorSummary('Failed to build pages'),
-                  ErrorDescription(Error.safeToString(error)),
-                ],
-              ),
-          };
-          return <Page<Object?>>[
-            MaterialPage(
-              child: Scaffold(
-                body: SafeArea(
-                  child: ErrorWidget.withDetails(
-                    message: 'Failed to build pages',
-                    error: flutterError,
-                  ),
-                ),
-              ),
-              arguments: <String, Object?>{
-                'error': Error.safeToString(error),
-                'stack': stackTrace.toString(),
-              },
-            ),
-          ];
-        },
+            // Build the page
+            final Page<Object?> page;
+            final route = routes[node.name];
+            if (route == null) {
+              final notFound = _notFound;
+              if (notFound != null) {
+                page = MaterialPage(
+                  child: notFound.call(context, node.name, node.arguments),
+                  arguments: node.arguments,
+                );
+              } else {
+                _onError?.call(
+                  Exception('Unknown route ${node.name}'),
+                  StackTrace.current,
+                );
+                continue;
+              }
+            } else {
+              page = route.pageBuilder(context, currentConfiguration, node);
+            }
+            pages.add(page);
+          } on Object catch (error, stackTrace) {
+            developer.log(
+              'Failed to build page',
+              name: 'octopus',
+              error: error,
+              stackTrace: stackTrace,
+              level: 1000,
+            );
+            _onError?.call(error, stackTrace);
+          }
+        }
+        if (pages.isNotEmpty) return pages;
+        return <Page<Object?>>[];
+      },
+      arguments: kMeasureEnabled
+          ? <String, String>{
+              'nodes': nodes.map<String>((e) => e.name).join(', '),
+            }
+          : null,
+    ),
+    (error, stackTrace) {
+      developer.log(
+        'Failed to build pages',
+        name: 'octopus',
+        error: error,
+        stackTrace: stackTrace,
+        level: 1000,
       );
+      final flutterError = switch (error) {
+        FlutterError error => error,
+        String message => FlutterError(message),
+        _ => FlutterError.fromParts(<DiagnosticsNode>[
+          ErrorSummary('Failed to build pages'),
+          ErrorDescription(Error.safeToString(error)),
+        ]),
+      };
+      return <Page<Object?>>[
+        MaterialPage(
+          child: Scaffold(
+            body: SafeArea(
+              child: ErrorWidget.withDetails(
+                message: 'Failed to build pages',
+                error: flutterError,
+              ),
+            ),
+          ),
+          arguments: <String, Object?>{
+            'error': Error.safeToString(error),
+            'stack': stackTrace.toString(),
+          },
+        ),
+      ];
+    },
+  );
 
   @override
   Future<bool> popRoute() => _handleErrors(() {
-        final nav = navigator;
-        assert(nav != null, 'Navigator is not attached to the OctopusDelegate');
-        if (nav == null) return SynchronousFuture<bool>(false);
-        return nav.maybePop();
-      });
+    final nav = navigator;
+    assert(nav != null, 'Navigator is not attached to the OctopusDelegate');
+    if (nav == null) return SynchronousFuture<bool>(false);
+    return nav.maybePop();
+  });
 
   Route<Object?>? _onUnknownRoute(
-          BuildContext context, RouteSettings settings) =>
-      _handleErrors(
-        () {
-          final widget = _notFound?.call(
-              context,
-              settings.name ?? 'unknown',
-              switch (settings.arguments) {
-                Map<String, String> arguments => arguments,
-                _ => const <String, String>{},
-              });
-          if (widget != null)
-            return MaterialPageRoute<Object?>(
-              builder: (_) => widget,
-              settings: settings,
-            );
-          developer.log(
-            'Unknown route ${settings.name}',
-            name: 'octopus',
-            level: 1000,
-            stackTrace: StackTrace.current,
-          );
-          _onError?.call(
-            'Unknown route ${settings.name}',
-            StackTrace.current,
-          );
-          return null;
-        },
-        (_, __) => null,
+    BuildContext context,
+    RouteSettings settings,
+  ) => _handleErrors(() {
+    final widget = _notFound?.call(
+      context,
+      settings.name ?? 'unknown',
+      switch (settings.arguments) {
+        Map<String, String> arguments => arguments,
+        _ => const <String, String>{},
+      },
+    );
+    if (widget != null)
+      return MaterialPageRoute<Object?>(
+        builder: (_) => widget,
+        settings: settings,
       );
+    developer.log(
+      'Unknown route ${settings.name}',
+      name: 'octopus',
+      level: 1000,
+      stackTrace: StackTrace.current,
+    );
+    _onError?.call('Unknown route ${settings.name}', StackTrace.current);
+    return null;
+  }, (_, __) => null);
 
-  late final OctopusStateQueue _$stateChangeQueue =
-      OctopusStateQueue(processor: _setConfiguration);
+  late final OctopusStateQueue _$stateChangeQueue = OctopusStateQueue(
+    processor: _setConfiguration,
+  );
 
   @override
   bool get isProcessing => _$stateChangeQueue.isProcessing;
@@ -348,7 +335,8 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
   /// Called when the one of the guards changed.
   void _onGuardsNotified() {
     setNewRoutePath(
-        _observer.value.mutate()..intention = OctopusStateIntention.replace);
+      _observer.value.mutate()..intention = OctopusStateIntention.replace,
+    );
   }
 
   /// DO NOT USE THIS METHOD DIRECTLY.
@@ -358,65 +346,63 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
   @protected
   @nonVirtual
   Future<void> _setConfiguration(OctopusState configuration) => _handleErrors(
-        () => measureAsync<FutureOr<void>>(
-          '_setConfiguration',
-          () async {
-            // Do nothing:
-            if (configuration.intention == OctopusStateIntention.cancel) return;
+    () => measureAsync<FutureOr<void>>('_setConfiguration', () async {
+      // Do nothing:
+      if (configuration.intention == OctopusStateIntention.cancel) return;
 
-            // Create a mutable copy of the configuration
-            // to allow changing it in the guards
-            var newConfiguration = configuration is OctopusState$Mutable
-                ? configuration
-                : configuration.mutate();
+      // Create a mutable copy of the configuration
+      // to allow changing it in the guards
+      var newConfiguration = configuration is OctopusState$Mutable
+          ? configuration
+          : configuration.mutate();
 
-            if (_guards.isNotEmpty) {
-              // Get the history of the states
-              final history = _observer.history;
+      if (_guards.isNotEmpty) {
+        // Get the history of the states
+        final history = _observer.history;
 
-              // Unsubscribe from the guards to avoid infinite loop
-              _guardsListener.removeListener(_onGuardsNotified);
-              final context = <String, Object?>{};
-              for (final guard in _guards) {
-                try {
-                  // Call the guard and get the new state
-                  final result =
-                      await guard(history, newConfiguration, context);
-                  newConfiguration = result.mutate();
-                  // Cancel navigation on [OctopusStateIntention.cancel]
-                  if (newConfiguration.intention ==
-                      OctopusStateIntention.cancel) return;
-                } on Object catch (error, stackTrace) {
-                  developer.log(
-                    'Guard ${guard.runtimeType} failed',
-                    name: 'octopus',
-                    error: error,
-                    stackTrace: stackTrace,
-                    level: 1000,
-                  );
-                  _onError?.call(error, stackTrace);
-                  return; // Cancel navigation if the guard failed
-                }
-              }
-              // Resubscribe to the guards
-              _guardsListener.addListener(_onGuardsNotified);
-            }
+        // Unsubscribe from the guards to avoid infinite loop
+        _guardsListener.removeListener(_onGuardsNotified);
+        final context = <String, Object?>{};
+        for (final guard in _guards) {
+          try {
+            // Call the guard and get the new state
+            final result = await guard(history, newConfiguration, context);
+            newConfiguration = result.mutate();
+            // Cancel navigation on [OctopusStateIntention.cancel]
+            if (newConfiguration.intention == OctopusStateIntention.cancel)
+              return;
+          } on Object catch (error, stackTrace) {
+            developer.log(
+              'Guard ${guard.runtimeType} failed',
+              name: 'octopus',
+              error: error,
+              stackTrace: stackTrace,
+              level: 1000,
+            );
+            _onError?.call(error, stackTrace);
+            return; // Cancel navigation if the guard failed
+          }
+        }
+        // Resubscribe to the guards
+        _guardsListener.addListener(_onGuardsNotified);
+      }
 
-            // Validate configuration
-            if (newConfiguration.children.isEmpty) return;
+      // Validate configuration
+      if (newConfiguration.children.isEmpty) return;
 
-            // Normalize configuration
-            final result = StateUtil.normalize(newConfiguration,
-                strategy: _duplicateStrategy);
-
-            if (_observer.changeState(result)) {
-              _updateTitle(routes[result.children.lastOrNull?.name]);
-              notifyListeners(); // Notify listeners if the state changed
-            }
-          },
-        ),
-        (_, __) => SynchronousFuture<void>(null),
+      // Normalize configuration
+      final result = StateUtil.normalize(
+        newConfiguration,
+        strategy: _duplicateStrategy,
       );
+
+      if (_observer.changeState(result)) {
+        _updateTitle(routes[result.children.lastOrNull?.name]);
+        notifyListeners(); // Notify listeners if the state changed
+      }
+    }),
+    (_, __) => SynchronousFuture<void>(null),
+  );
 
   @override
   void dispose() {
@@ -427,8 +413,7 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
     super.dispose();
   }
 
-  final Map<String, Page<Object?>> _dialogBuilders =
-      <String, Page<Object?>>{};
+  final Map<String, Page<Object?>> _dialogBuilders = <String, Page<Object?>>{};
   final Map<String, Object?> _dialogResults = <String, Object?>{};
 
   /// Show a dialog as a declarative page.
@@ -449,8 +434,9 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
     final completer = Completer<T?>();
     void onStateChanged() {
       if (completer.isCompleted) return;
-      final node = _observer.value.children.firstWhereOrNull((node) =>
-          node.name == _kDialogNodeName && node.arguments['k'] == key);
+      final node = _observer.value.children.firstWhereOrNull(
+        (node) => node.name == _kDialogNodeName && node.arguments['k'] == key,
+      );
       if (node != null) return;
       final result = _dialogResults.remove(key);
       completer.complete(result is T ? result : null);
@@ -461,10 +447,7 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
         name: _kDialogNodeName,
         builder: builder,
         onResult: (result) => _dialogResults[key] = result,
-        arguments: <String, String>{
-          'k': key,
-          ...?arguments,
-        },
+        arguments: <String, String>{'k': key, ...?arguments},
         restorationId: null,
         barrierDismissible: barrierDismissible,
         barrierColor: barrierColor,
@@ -480,10 +463,7 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
           ..children.add(
             OctopusNode.mutable(
               _kDialogNodeName,
-              arguments: <String, String>{
-                'k': key,
-                ...?arguments,
-              },
+              arguments: <String, String>{'k': key, ...?arguments},
             ),
           ),
       );
@@ -527,8 +507,9 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
     final completer = Completer<T?>();
     void onStateChanged() {
       if (completer.isCompleted) return;
-      final node = _observer.value.children.firstWhereOrNull((node) =>
-          node.name == _kDialogNodeName && node.arguments['k'] == key);
+      final node = _observer.value.children.firstWhereOrNull(
+        (node) => node.name == _kDialogNodeName && node.arguments['k'] == key,
+      );
       if (node != null) return;
       final result = _dialogResults.remove(key);
       completer.complete(result is T ? result : null);
@@ -539,10 +520,7 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
         name: _kDialogNodeName,
         pageBuilder: pageBuilder,
         onResult: (result) => _dialogResults[key] = result,
-        arguments: <String, String>{
-          'k': key,
-          ...?arguments,
-        },
+        arguments: <String, String>{'k': key, ...?arguments},
         restorationId: null,
         barrierDismissible: barrierDismissible,
         barrierColor: barrierColor,
@@ -561,10 +539,7 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
           ..children.add(
             OctopusNode.mutable(
               _kDialogNodeName,
-              arguments: <String, String>{
-                'k': key,
-                ...?arguments,
-              },
+              arguments: <String, String>{'k': key, ...?arguments},
             ),
           ),
       );

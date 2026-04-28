@@ -7,11 +7,11 @@ import 'package:octopus/src/state/state.dart';
 
 @internal
 class OctopusStateQueue implements Sink<OctopusState> {
-  OctopusStateQueue(
-      {required Future<void> Function(OctopusState state) processor,
-      String debugLabel = 'OctopusStateQueue'})
-      : _stateProcessor = processor,
-        _debugLabel = debugLabel;
+  OctopusStateQueue({
+    required Future<void> Function(OctopusState state) processor,
+    String debugLabel = 'OctopusStateQueue',
+  }) : _stateProcessor = processor,
+       _debugLabel = debugLabel;
 
   final DoubleLinkedQueue<_StateTask> _queue = DoubleLinkedQueue<_StateTask>();
   final Future<void> Function(OctopusState state) _stateProcessor;
@@ -101,8 +101,8 @@ class OctopusStateQueue implements Sink<OctopusState> {
 @immutable
 class _StateTask {
   _StateTask(OctopusState state)
-      : _state = state,
-        _completer = Completer<void>.sync();
+    : _state = state,
+      _completer = Completer<void>.sync();
 
   final OctopusState _state;
   final Completer<void> _completer;

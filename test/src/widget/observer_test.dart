@@ -28,124 +28,93 @@ class FakeExtra {
 }
 
 void main() => group('Observer', () {
-      late FakeExtra extra;
+  late FakeExtra extra;
 
-      setUp(() {
-        extra = const FakeExtra(data: {'complex': 'object'});
-      });
+  setUp(() {
+    extra = const FakeExtra(data: {'complex': 'object'});
+  });
 
-      testWidgets(
-        'value.children',
-        (tester) async {
-          final octopus = Octopus(routes: FakeRoutes.values);
-          final controller = await tester.pumpApp(octopus);
-          expect(
-            octopus.observer.value.children,
-            allOf(
-              isNotEmpty,
-              hasLength(1),
-              contains(
-                isA<OctopusNode>()
-                    .having(
-                      (node) => node.name,
-                      'name',
-                      FakeRoutes.home.name,
-                    )
-                    .having(
-                      (node) => node.arguments,
-                      'arguments',
-                      isEmpty,
-                    ),
-              ),
-            ),
-          );
+  testWidgets('value.children', (tester) async {
+    final octopus = Octopus(routes: FakeRoutes.values);
+    final controller = await tester.pumpApp(octopus);
+    expect(
+      octopus.observer.value.children,
+      allOf(
+        isNotEmpty,
+        hasLength(1),
+        contains(
+          isA<OctopusNode>()
+              .having((node) => node.name, 'name', FakeRoutes.home.name)
+              .having((node) => node.arguments, 'arguments', isEmpty),
+        ),
+      ),
+    );
 
-          /// Verify that extra handles custom data objects such as [FakeExtra]
-          await octopus.push(
-            FakeRoutes.category,
-            arguments: {'id': '1'},
-            extra: {'extra': extra},
-          );
-          await controller.pump();
-          expect(
-            octopus.observer.value.children,
-            allOf(
-              isNotEmpty,
-              hasLength(2),
-            ),
-          );
+    /// Verify that extra handles custom data objects such as [FakeExtra]
+    await octopus.push(
+      FakeRoutes.category,
+      arguments: {'id': '1'},
+      extra: {'extra': extra},
+    );
+    await controller.pump();
+    expect(octopus.observer.value.children, allOf(isNotEmpty, hasLength(2)));
 
-          // Verify that new route have extra
-          expect(
-            octopus.observer.value.children.last.extra,
-            equals({'extra': extra}),
-          );
+    // Verify that new route have extra
+    expect(
+      octopus.observer.value.children.last.extra,
+      equals({'extra': extra}),
+    );
 
-          // Verify that new route don't have extra
-          await octopus.push(
-            FakeRoutes.category,
-            arguments: {'id': '2'},
-          );
-          await controller.pump();
+    // Verify that new route don't have extra
+    await octopus.push(FakeRoutes.category, arguments: {'id': '2'});
+    await controller.pump();
 
-          expect(
-            octopus.observer.value.children.last.extra,
-            equals({}),
-          );
+    expect(octopus.observer.value.children.last.extra, equals({}));
 
-          await octopus.pop();
-          await octopus.pop();
-          expect(
-            octopus.observer.value.children,
-            allOf(
-              isNotEmpty,
-              hasLength(1),
-              contains(
-                isA<OctopusNode>().having(
-                  (node) => node.name,
-                  'name',
-                  FakeRoutes.home.name,
-                ),
-              ),
-            ),
-          );
-
-          // Verify that extra is removed after pop
-          expect(
-            octopus.observer.value.children.last.extra,
-            equals({}),
-          );
-        },
-      );
-
-      testWidgets('addListener', (tester) async {
-        final octopus = Octopus(routes: FakeRoutes.values);
-        final controller = await tester.pumpApp(octopus);
-        var calls = 0;
-        var arguments = <String, String>{};
-        octopus.observer.addListener(() {
-          calls++;
-          arguments = octopus.observer.value.arguments;
-        });
-        expect(calls, equals(0));
-        await octopus.setState(
-          (state) =>
-              state..add(FakeRoutes.category.node(arguments: {'id': '1'})),
-        );
-        await controller.pump();
-        expect(calls, equals(1));
-        await octopus.pop();
-        expect(calls, equals(2));
-        expect(arguments, isEmpty);
-        await octopus.setArguments((args) => args['name'] = 'Hello world');
-        expect(calls, equals(3));
-        expect(
-          arguments,
-          allOf(
-            isNotEmpty,
-            hasLength(1),
-            containsPair('name', 'Hello world'),
+    await octopus.pop();
+    await octopus.pop();
+    expect(
+      octopus.observer.value.children,
+      allOf(
+        isNotEmpty,
+        hasLength(1),
+        contains(
+          isA<OctopusNode>().having(
+            (node) => node.name,
+            'name',
+            FakeRoutes.home.name,
           ),
-        );
-      });
+        ),
+      ),
+    );
+
+    // Verify that extra is removed after pop
+    expect(octopus.observer.value.children.last.extra, equals({}));
+  });
+
+  testWidgets('addListener', (tester) async {
+    final octopus = Octopus(routes: FakeRoutes.values);
+    final controller = await tester.pumpApp(octopus);
+    var calls = 0;
+    var arguments = <String, String>{};
+    octopus.observer.addListener(() {
+      calls++;
+      arguments = octopus.observer.value.arguments;
     });
+    expect(calls, equals(0));
+    await octopus.setState(
+      (state) => state..add(FakeRoutes.category.node(arguments: {'id': '1'})),
+    );
+    await controller.pump();
+    expect(calls, equals(1));
+    await octopus.pop();
+    expect(calls, equals(2));
+    expect(arguments, isEmpty);
+    await octopus.setArguments((args) => args['name'] = 'Hello world');
+    expect(calls, equals(3));
+    expect(
+      arguments,
+      allOf(isNotEmpty, hasLength(1), containsPair('name', 'Hello world')),
+    );
+  });
+});

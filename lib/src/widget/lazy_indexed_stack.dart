@@ -60,16 +60,13 @@ class _LazyIndexedStackState extends State<LazyIndexedStack> {
 
     // Create a list of widgets for the IndexedStack
     // Only include widgets that have been built
-    final children = List<Widget>.generate(
-      widget.itemCount,
-      (index) {
-        if (_children.containsKey(index)) {
-          return _children[index]!;
-        }
-        // Return an empty container for unbuilt widgets
-        return const SizedBox.shrink();
-      },
-    );
+    final children = List<Widget>.generate(widget.itemCount, (index) {
+      if (_children.containsKey(index)) {
+        return _children[index]!;
+      }
+      // Return an empty container for unbuilt widgets
+      return const SizedBox.shrink();
+    });
 
     return IndexedStack(
       index: widget.index,

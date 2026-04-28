@@ -40,19 +40,19 @@ class OctopusGeneralDialogPage extends Page<Object?> {
   @override
   Route<Object?> createRoute(BuildContext context) {
     final route = RawDialogRoute<Object?>(
-        pageBuilder: pageBuilder,
-        barrierDismissible: barrierDismissible,
-        barrierLabel: barrierLabel,
-        barrierColor: barrierColor,
-        transitionDuration: transitionDuration,
-        transitionBuilder: transitionBuilder,
-        settings: this,
-        requestFocus: requestFocus,
-        anchorPoint: anchorPoint,
-        traversalEdgeBehavior: traversalEdgeBehavior,
-        directionalTraversalEdgeBehavior: directionalTraversalEdgeBehavior,
-        fullscreenDialog: fullscreenDialog,
-      );
+      pageBuilder: pageBuilder,
+      barrierDismissible: barrierDismissible,
+      barrierLabel: barrierLabel,
+      barrierColor: barrierColor,
+      transitionDuration: transitionDuration,
+      transitionBuilder: transitionBuilder,
+      settings: this,
+      requestFocus: requestFocus,
+      anchorPoint: anchorPoint,
+      traversalEdgeBehavior: traversalEdgeBehavior,
+      directionalTraversalEdgeBehavior: directionalTraversalEdgeBehavior,
+      fullscreenDialog: fullscreenDialog,
+    );
     final onResult = this.onResult;
     if (onResult != null) route.popped.then(onResult);
     return route;
@@ -94,18 +94,18 @@ class OctopusDialogPage extends Page<Object?> {
   @override
   Route<Object?> createRoute(BuildContext context) {
     final route = DialogRoute<Object?>(
-        context: context,
-        builder: builder,
-        themes: themes,
-        barrierColor: barrierColor,
-        barrierDismissible: barrierDismissible,
-        barrierLabel: barrierLabel,
-        useSafeArea: useSafeArea,
-        requestFocus: requestFocus,
-        anchorPoint: anchorPoint,
-        traversalEdgeBehavior: traversalEdgeBehavior,
-        settings: this,
-      );
+      context: context,
+      builder: builder,
+      themes: themes,
+      barrierColor: barrierColor,
+      barrierDismissible: barrierDismissible,
+      barrierLabel: barrierLabel,
+      useSafeArea: useSafeArea,
+      requestFocus: requestFocus,
+      anchorPoint: anchorPoint,
+      traversalEdgeBehavior: traversalEdgeBehavior,
+      settings: this,
+    );
     final onResult = this.onResult;
     if (onResult != null) route.popped.then(onResult);
     return route;

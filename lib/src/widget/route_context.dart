@@ -18,24 +18,20 @@ class InheritedOctopusRoute extends InheritedWidget {
   static InheritedOctopusRoute? maybeOf(
     BuildContext context, {
     bool listen = true,
-  }) =>
-      listen
-          ? context.dependOnInheritedWidgetOfExactType<InheritedOctopusRoute>()
-          : context.getInheritedWidgetOfExactType<InheritedOctopusRoute>();
+  }) => listen
+      ? context.dependOnInheritedWidgetOfExactType<InheritedOctopusRoute>()
+      : context.getInheritedWidgetOfExactType<InheritedOctopusRoute>();
 
   static Never _notFoundInheritedWidgetOfExactType() => throw ArgumentError(
-        'Out of scope, not found inherited widget '
-            'a InheritedOctopusRoute of the exact type',
-        'out_of_scope',
-      );
+    'Out of scope, not found inherited widget '
+        'a InheritedOctopusRoute of the exact type',
+    'out_of_scope',
+  );
 
   /// The state from the closest instance of this class
   /// that encloses the given context.
   /// e.g. `InheritedOctopusRoute.of(context)`
-  static InheritedOctopusRoute of(
-    BuildContext context, {
-    bool listen = true,
-  }) =>
+  static InheritedOctopusRoute of(BuildContext context, {bool listen = true}) =>
       maybeOf(context, listen: listen) ?? _notFoundInheritedWidgetOfExactType();
 
   /// Node of state.

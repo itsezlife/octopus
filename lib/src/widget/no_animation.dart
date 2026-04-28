@@ -39,9 +39,9 @@ class NoAnimationTransitionDelegate<T> extends TransitionDelegate<T> {
   Iterable<RouteTransitionRecord> resolve({
     required List<RouteTransitionRecord> newPageRouteHistory,
     required Map<RouteTransitionRecord?, RouteTransitionRecord>
-        locationToExitingPageRoute,
+    locationToExitingPageRoute,
     required Map<RouteTransitionRecord?, List<RouteTransitionRecord>>
-        pageRouteToPagelessRoutes,
+    pageRouteToPagelessRoutes,
   }) {
     final results = <RouteTransitionRecord>[];
 
@@ -100,9 +100,9 @@ class NoAnimationPage<T> extends Page<T> {
 
   @override
   Route<T> createRoute(BuildContext context) => _NoAnimationPageRoute<T>(
-        page: this,
-        allowSnapshotting: allowSnapshotting,
-      );
+    page: this,
+    allowSnapshotting: allowSnapshotting,
+  );
 }
 
 class _NoAnimationPageRoute<T> extends PageRoute<T> {
@@ -144,12 +144,11 @@ class _NoAnimationPageRoute<T> extends PageRoute<T> {
     BuildContext context,
     Animation<double> animation,
     Animation<double> secondaryAnimation,
-  ) =>
-      Semantics(
-        scopesRoute: true,
-        explicitChildNodes: true,
-        child: _page.child,
-      );
+  ) => Semantics(
+    scopesRoute: true,
+    explicitChildNodes: true,
+    child: _page.child,
+  );
 
   @override
   Duration get transitionDuration => Duration.zero;

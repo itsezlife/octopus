@@ -88,9 +88,12 @@ extension WidgetTesterX on WidgetTester {
     // Controllers for various app settings.
     final theme = ValueNotifier<ThemeMode>(ThemeMode.system);
     final size = ValueNotifier<Size>(
-        flutterView.physicalSize / flutterView.devicePixelRatio);
-    size.addListener(() =>
-        flutterView.physicalSize = size.value * flutterView.devicePixelRatio);
+      flutterView.physicalSize / flutterView.devicePixelRatio,
+    );
+    size.addListener(
+      () =>
+          flutterView.physicalSize = size.value * flutterView.devicePixelRatio,
+    );
     final rebuild = Listenable.merge([theme, size]);
     final navigatorObserver = NavigatorObserver();
     final rootWidget = ListenableBuilder(
@@ -100,8 +103,9 @@ extension WidgetTesterX on WidgetTester {
         child: MediaQuery(
           data: MediaQueryData.fromView(
             flutterView,
-            platformData: (platformData ?? const MediaQueryData())
-                .copyWith(size: size.value),
+            platformData: (platformData ?? const MediaQueryData()).copyWith(
+              size: size.value,
+            ),
           ),
           // Thats a legacy theme provider, we should exclude it
           child: MaterialApp.router(

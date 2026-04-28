@@ -1,10 +1,9 @@
-// ignore_for_file: unnecessary_lambdas
-
 import 'package:flutter_test/flutter_test.dart';
 
 import 'src/unit/hash_test.dart' as hash_test;
 import 'src/unit/state_test.dart' as state_test;
 import 'src/widget/dialog_result_test.dart' as dialog_result_test;
+import 'src/widget/nested_tabs_test.dart' as nested_tabs_test;
 import 'src/widget/observer_test.dart' as observer_test;
 import 'src/widget/tabs_test.dart' as tabs_test;
 
@@ -18,5 +17,6 @@ void main() {
     observer_test.main();
     dialog_result_test.main();
     tabs_test.main();
+    nested_tabs_test.main();
   });
 }

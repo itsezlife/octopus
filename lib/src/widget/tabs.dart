@@ -4,35 +4,38 @@ import 'package:octopus/src/widget/lazy_indexed_stack.dart';
 
 /// Builds the UI for tabs, providing the current child widget
 /// and control callbacks.
-typedef OctopusTabsBuilder = Widget Function(
-  BuildContext context,
-  Widget child,
-  int currentIndex,
-  ValueChanged<int> onTabPressed,
-);
+typedef OctopusTabsBuilder =
+    Widget Function(
+      BuildContext context,
+      Widget child,
+      int currentIndex,
+      ValueChanged<int> onTabPressed,
+    );
 
 /// Callback for back button pressed.
-typedef OctopusOnBackButtonPressed = Future<bool> Function(
-    BuildContext context, NavigatorState navigator);
+typedef OctopusOnBackButtonPressed =
+    Future<bool> Function(BuildContext context, NavigatorState navigator);
 
 /// Callback builder for rendering a stack of tabs.
-typedef OctopusTabStackBuilder = Widget Function(
-  BuildContext context,
-  int index,
-  List<OctopusRoute> tabs,
-  String tabIdentifier,
-  OctopusTabsVariant variant,
-  OctopusTabBuilder tabBuilder,
-  OctopusOnBackButtonPressed? onBackButtonPressed,
-);
+typedef OctopusTabStackBuilder =
+    Widget Function(
+      BuildContext context,
+      int index,
+      List<OctopusRoute> tabs,
+      String tabIdentifier,
+      OctopusTabsVariant variant,
+      OctopusTabBuilder tabBuilder,
+      OctopusOnBackButtonPressed? onBackButtonPressed,
+    );
 
 /// Callback builder for rendering a single tab.
-typedef OctopusTabBuilder = Widget Function(
-  BuildContext context,
-  OctopusRoute route,
-  String tabIdentifier,
-  OctopusOnBackButtonPressed? onBackButtonPressed,
-);
+typedef OctopusTabBuilder =
+    Widget Function(
+      BuildContext context,
+      OctopusRoute route,
+      String tabIdentifier,
+      OctopusOnBackButtonPressed? onBackButtonPressed,
+    );
 
 /// Callback when the tab is changed.
 typedef OctopusOnTabChanged = void Function(int index, OctopusRoute tab);
@@ -81,10 +84,17 @@ class OctopusTabs extends StatefulWidget {
     this.tabBuilder = _defaultTabBuilder,
     this.onTabChanged,
     super.key,
-  })  : assert(tabs.length > 0, 'Tabs should contain at least 1 route'),
-        variant = OctopusTabsVariant.lazy;
+  }) : assert(tabs.length > 0, 'Tabs should contain at least 1 route'),
+       variant = OctopusTabsVariant.lazy;
 
   /// Unique key used to store and retrieve the active tab in router args.
+  ///
+  /// This value is used as a key in `OctopusState.arguments` (global
+  /// arguments), so it **must be unique** across all [OctopusTabs] instances
+  /// that can exist within the same router state (including nested tabs).
+  ///
+  /// For example, use distinct identifiers like `homeTab` / `profileTab`, or
+  /// `outerTab` / `innerTab` for nested tabs.
   final String tabIdentifier;
 
   /// The base route node under which tab branches are managed.
@@ -116,44 +126,40 @@ class OctopusTabs extends StatefulWidget {
 
   /// Default callback builder for rendering a single tab.
   static Widget _defaultTabBuilder(
-          BuildContext context,
-          OctopusRoute route,
-          String tabIdentifier,
-          OctopusOnBackButtonPressed? onBackButtonPressed) =>
-      TabBucketNavigator(
-        route: route,
-        tabIdentifier: tabIdentifier,
-        onBackButtonPressed: onBackButtonPressed,
-      );
+    BuildContext context,
+    OctopusRoute route,
+    String tabIdentifier,
+    OctopusOnBackButtonPressed? onBackButtonPressed,
+  ) => TabBucketNavigator(
+    route: route,
+    tabIdentifier: tabIdentifier,
+    onBackButtonPressed: onBackButtonPressed,
+  );
 
   /// Default callback builder for rendering a stack of tabs.
   static Widget _defaultTabStackBuilder(
-          BuildContext context,
-          int index,
-          List<OctopusRoute> tabs,
-          String tabIdentifier,
-          OctopusTabsVariant variant,
-          OctopusTabBuilder tabBuilder,
-          OctopusOnBackButtonPressed? onBackButtonPressed) =>
-      switch (variant) {
-        OctopusTabsVariant.normal => IndexedStack(
-            index: index,
-            children: [
-              for (final tab in tabs)
-                tabBuilder(context, tab, tabIdentifier, onBackButtonPressed)
-            ],
-          ),
-        OctopusTabsVariant.lazy => LazyIndexedStack(
-            index: index,
-            itemCount: tabs.length,
-            itemBuilder: (index) => tabBuilder(
-              context,
-              tabs[index],
-              tabIdentifier,
-              onBackButtonPressed,
-            ),
-          ),
-      };
+    BuildContext context,
+    int index,
+    List<OctopusRoute> tabs,
+    String tabIdentifier,
+    OctopusTabsVariant variant,
+    OctopusTabBuilder tabBuilder,
+    OctopusOnBackButtonPressed? onBackButtonPressed,
+  ) => switch (variant) {
+    OctopusTabsVariant.normal => IndexedStack(
+      index: index,
+      children: [
+        for (final tab in tabs)
+          tabBuilder(context, tab, tabIdentifier, onBackButtonPressed),
+      ],
+    ),
+    OctopusTabsVariant.lazy => LazyIndexedStack(
+      index: index,
+      itemCount: tabs.length,
+      itemBuilder: (index) =>
+          tabBuilder(context, tabs[index], tabIdentifier, onBackButtonPressed),
+    ),
+  };
 
   @override
   State<OctopusTabs> createState() => _OctopusTabsState();
@@ -173,6 +179,10 @@ class _OctopusTabsState extends State<OctopusTabs> {
   String _tabRouteName(OctopusRoute route) =>
       '${route.name}-${widget.tabIdentifier}';
 
+  // Use a global argument key, namespaced by root route,
+  // so multiple tab groups don't clash and route page keys stay stable.
+  String get _stateTabKey => widget.tabIdentifier;
+
   @override
   void initState() {
     super.initState();
@@ -180,11 +190,7 @@ class _OctopusTabsState extends State<OctopusTabs> {
 
     // Restore active tab from router args or default to first.
     _tab = widget.tabs.firstWhere(
-      (t) =>
-          t.name ==
-          _octopusStateObserver.value
-              .findByName(widget.root.name)
-              ?.arguments[widget.tabIdentifier],
+      (t) => t.name == _octopusStateObserver.value.arguments[_stateTabKey],
       orElse: () => widget.tabs.first,
     );
 
@@ -213,12 +219,7 @@ class _OctopusTabsState extends State<OctopusTabs> {
   void _switchTab(OctopusRoute tab) {
     if (!mounted) return;
     if (_tab == tab) return;
-    context.octopus.setState((state) {
-      final root = state.findByName(widget.root.name);
-      if (root == null) return state;
-      root.arguments[widget.tabIdentifier] = tab.name;
-      return state;
-    });
+    context.octopus.setArguments((args) => args[_stateTabKey] = tab.name);
     setState(() => _tab = tab);
     widget.onTabChanged?.call(_activeIndex, _tab);
   }
@@ -238,11 +239,7 @@ class _OctopusTabsState extends State<OctopusTabs> {
   // Router state changed
   void _onOctopusStateChanged() {
     final newTab = widget.tabs.firstWhere(
-      (t) =>
-          t.name ==
-          _octopusStateObserver.value
-              .findByName(widget.root.name)
-              ?.arguments[widget.tabIdentifier],
+      (t) => t.name == _octopusStateObserver.value.arguments[_stateTabKey],
       orElse: () => widget.tabs.first,
     );
     _switchTab(newTab);
@@ -250,19 +247,19 @@ class _OctopusTabsState extends State<OctopusTabs> {
 
   @override
   Widget build(BuildContext context) => widget.builder(
-        context,
-        widget.tabStackBuilder(
-          context,
-          _activeIndex,
-          widget.tabs,
-          widget.tabIdentifier,
-          widget.variant,
-          widget.tabBuilder,
-          widget.onBackButtonPressed,
-        ),
-        _activeIndex,
-        _onPressed,
-      );
+    context,
+    widget.tabStackBuilder(
+      context,
+      _activeIndex,
+      widget.tabs,
+      widget.tabIdentifier,
+      widget.variant,
+      widget.tabBuilder,
+      widget.onBackButtonPressed,
+    ),
+    _activeIndex,
+    _onPressed,
+  );
 }
 
 /// {@template tabs}
@@ -304,20 +301,17 @@ class TabBucketNavigator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BucketNavigator(
-        bucket: '${route.name}-$tabIdentifier',
-        // Handle back button only if the route is within tab's branch
-        shouldHandleBackButton: (_) {
-          if (shouldHandleBackButton?.call(context) case final shouldHandle?) {
-            return shouldHandle;
-          }
-          return Octopus.instance.state
-                  .findByName(route.name)
-                  ?.arguments[tabIdentifier] ==
-              route.name;
-        },
-        onBackButtonPressed: onBackButtonPressed,
-        observers: observers,
-        restorationScopeId: restorationScopeId,
-        transitionDelegate: transitionDelegate,
-      );
+    bucket: '${route.name}-$tabIdentifier',
+    // Handle back button only if the route is within tab's branch
+    shouldHandleBackButton: (_) {
+      if (shouldHandleBackButton?.call(context) case final shouldHandle?) {
+        return shouldHandle;
+      }
+      return Octopus.instance.state.arguments[tabIdentifier] == route.name;
+    },
+    onBackButtonPressed: onBackButtonPressed,
+    observers: observers,
+    restorationScopeId: restorationScopeId,
+    transitionDelegate: transitionDelegate,
+  );
 }

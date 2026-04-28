@@ -25,20 +25,17 @@ abstract interface class OctopusStateObserver
 @immutable
 final class OctopusHistoryEntry implements Comparable<OctopusHistoryEntry> {
   /// {@macro history_entry}
-  OctopusHistoryEntry({
-    required this.state,
-    DateTime? timestamp,
-  }) : timestamp = timestamp ?? DateTime.now();
+  OctopusHistoryEntry({required this.state, DateTime? timestamp})
+    : timestamp = timestamp ?? DateTime.now();
 
   /// Create an entry from json.
   ///
   /// {@macro history_entry}
   factory OctopusHistoryEntry.fromJson(Map<String, Object?> json) {
-    if (json
-        case <String, Object?>{
-          'timestamp': String timestamp,
-          'state': Map<String, Object?> state,
-        }) {
+    if (json case <String, Object?>{
+      'timestamp': String timestamp,
+      'state': Map<String, Object?> state,
+    }) {
       return OctopusHistoryEntry(
         state: OctopusState.fromJson(state).freeze(),
         timestamp: DateTime.parse(timestamp),
@@ -60,9 +57,9 @@ final class OctopusHistoryEntry implements Comparable<OctopusHistoryEntry> {
 
   /// Convert the entry to json.
   Map<String, Object?> toJson() => <String, Object?>{
-        'timestamp': timestamp.toIso8601String(),
-        'state': state.toJson(),
-      };
+    'timestamp': timestamp.toIso8601String(),
+    'state': state.toJson(),
+  };
 
   @override
   late final int hashCode = state.hashCode ^ timestamp.hashCode;
