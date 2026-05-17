@@ -110,6 +110,7 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
   late final Listenable _guardsListener;
 
   /// WidgetApp's navigator.
+  @override
   NavigatorState? get navigator => _modalObserver.navigator;
   final NavigatorObserver _modalObserver = RouteObserver<ModalRoute<Object?>>();
 

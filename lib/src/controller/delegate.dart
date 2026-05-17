@@ -16,4 +16,7 @@ abstract base class OctopusDelegate extends RouterDelegate<OctopusState> {
 
   /// Build pages from [OctopusNode]s.
   List<Page<Object?>> buildPages(BuildContext context, List<OctopusNode> nodes);
+
+  /// The navigator state from the modal observer.
+  NavigatorState? get navigator;
 }
