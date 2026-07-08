@@ -37,6 +37,7 @@ class HomeScreen extends StatelessWidget {
                 onTap: () => context.octopus.push(Routes.profile),
               ),
               const _ShowDialogExample(),
+              const _ShowModalBottomSheetExample(),
             ],
           ),
         ),
@@ -127,6 +128,62 @@ class _DialogExampleState extends State<_DialogExample> {
                 ),
                 iconSize: 32,
                 onPressed: () => Navigator.maybePop(context, _controller.text),
+              ),
+            ],
+          ),
+        ),
+      );
+}
+
+class _ShowModalBottomSheetExample extends StatefulWidget {
+  const _ShowModalBottomSheetExample({
+    // ignore: unused_element_parameter
+    super.key,
+  });
+
+  @override
+  State<_ShowModalBottomSheetExample> createState() =>
+      _ShowModalBottomSheetExampleState();
+}
+
+class _ShowModalBottomSheetExampleState
+    extends State<_ShowModalBottomSheetExample> {
+  String? lastResult;
+
+  @override
+  Widget build(BuildContext context) => ListTile(
+        title: const Text('Show modal bottom sheet'),
+        subtitle: Text(switch (lastResult) {
+          String text when text.isNotEmpty => 'Last result: $text',
+          _ => 'Show sheet and receive result',
+        }),
+        onTap: () => context.octopus
+            .showModalBottomSheet<String>(
+              builder: (context) => const _ModalBottomSheetExample(),
+            )
+            .then<void>((value) => setState(() => lastResult = value)),
+      );
+}
+
+class _ModalBottomSheetExample extends StatelessWidget {
+  const _ModalBottomSheetExample();
+
+  @override
+  Widget build(BuildContext context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const Text('Modal bottom sheet example'),
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: () => Navigator.pop(context, 'selected'),
+                child: const Text('Select'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Dismiss'),
               ),
             ],
           ),

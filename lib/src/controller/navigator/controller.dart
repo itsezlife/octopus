@@ -376,4 +376,45 @@ final class Octopus$NavigatorImpl implements Octopus {
         directionalTraversalEdgeBehavior: directionalTraversalEdgeBehavior,
         fullscreenDialog: fullscreenDialog,
       );
+
+  @override
+  Future<T?> showModalBottomSheet<T>({
+    required WidgetBuilder builder,
+    Map<String, String>? arguments,
+    Color? backgroundColor,
+    double? elevation,
+    ShapeBorder? shape,
+    Clip? clipBehavior,
+    BoxConstraints? constraints,
+    Color? barrierColor,
+    String? barrierLabel,
+    bool isScrollControlled = false,
+    double scrollControlDisabledMaxHeightRatio = 9.0 / 16.0,
+    bool isDismissible = true,
+    bool enableDrag = true,
+    bool? showDragHandle,
+    bool useSafeArea = false,
+    Offset? anchorPoint,
+    bool? requestFocus,
+  }) =>
+      _routerDelegate.showModalBottomSheet<T>(
+        builder: builder,
+        arguments: arguments,
+        backgroundColor: backgroundColor,
+        elevation: elevation,
+        shape: shape,
+        clipBehavior: clipBehavior,
+        constraints: constraints,
+        barrierColor: barrierColor,
+        barrierLabel: barrierLabel,
+        isScrollControlled: isScrollControlled,
+        scrollControlDisabledMaxHeightRatio:
+            scrollControlDisabledMaxHeightRatio,
+        isDismissible: isDismissible,
+        enableDrag: enableDrag,
+        showDragHandle: showDragHandle,
+        useSafeArea: useSafeArea,
+        anchorPoint: anchorPoint,
+        requestFocus: requestFocus,
+      );
 }
