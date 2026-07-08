@@ -1,9 +1,6 @@
 ## 0.0.11
 
 - Add `Octopus.showModalBottomSheet` (page-based Completer pattern, node `m`)
-- Present modal sheets via `RawDialogRoute` (slide-up) instead of
-  `ModalBottomSheetRoute`, so system back pops through `onPopPage` on
-  page-based navigators (parity with `showGeneralDialog`)
 
 ## 0.0.9
 

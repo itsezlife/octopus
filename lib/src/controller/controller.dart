@@ -214,14 +214,6 @@ abstract interface class Octopus {
   /// [Navigator.push]), so system back closes the sheet through [onPopPage]
   /// instead of [SystemNavigator.pop].
   ///
-  /// Implemented with [RawDialogRoute] + slide-up transition (same route
-  /// family as [showGeneralDialog]) rather than [ModalBottomSheetRoute],
-  /// which does not reliably participate in page-based `maybePop`.
-  ///
-  /// [enableDrag] / [showDragHandle] are accepted for API parity with Material
-  /// [showModalBottomSheet] but are unused on the route; put drag-to-dismiss
-  /// in the sheet content if needed.
-  ///
   /// Returns the value passed to [Navigator.pop], or `null` if dismissed.
   Future<T?> showModalBottomSheet<T>({
     required WidgetBuilder builder,
