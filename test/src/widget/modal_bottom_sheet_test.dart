@@ -242,28 +242,24 @@ void main() => group('showModalBottomSheet', () {
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
             useSafeArea: true,
-            builder: (sheetContext) {
-              return DraggableScrollableSheet(
-                initialChildSize: 0.95,
-                minChildSize: 0.35,
-                maxChildSize: 0.95,
-                expand: false,
-                builder: (context, scrollController) {
-                  return Material(
-                    color: Colors.white,
-                    child: ListView.builder(
-                      controller: scrollController,
-                      itemCount: 20,
-                      itemBuilder: (context, index) => ListTile(
-                        key: index == 0 ? const Key('sheet-item') : null,
-                        title: Text('Item $index'),
-                        onTap: () => Navigator.of(sheetContext).pop(index),
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
+            builder: (sheetContext) => DraggableScrollableSheet(
+              initialChildSize: 0.95,
+              minChildSize: 0.35,
+              maxChildSize: 0.95,
+              expand: false,
+              builder: (context, scrollController) => Material(
+                color: Colors.white,
+                child: ListView.builder(
+                  controller: scrollController,
+                  itemCount: 20,
+                  itemBuilder: (context, index) => ListTile(
+                    key: index == 0 ? const Key('sheet-item') : null,
+                    title: Text('Item $index'),
+                    onTap: () => Navigator.of(sheetContext).pop(index),
+                  ),
+                ),
+              ),
+            ),
           );
           await tester.pumpAndSettle();
 
