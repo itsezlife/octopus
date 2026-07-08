@@ -19,10 +19,12 @@ import 'package:octopus/src/util/logs.dart';
 import 'package:octopus/src/util/state_util.dart';
 import 'package:octopus/src/widget/dialog_page.dart';
 import 'package:octopus/src/widget/inherited_octopus.dart';
+import 'package:octopus/src/widget/modal_bottom_sheet_page.dart';
 import 'package:octopus/src/widget/navigator.dart';
 import 'package:octopus/src/widget/no_animation.dart';
 
 const String _kDialogNodeName = 'd';
+const String _kModalNodeName = 'm';
 
 /// Octopus delegate.
 @internal
@@ -173,6 +175,14 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
               }
             }
 
+            // If the node is a modal bottom sheet, then save the result
+            if (node.name == _kModalNodeName) {
+              final key = node.arguments['k'];
+              if (key != null) {
+                _modalResults[key] = result;
+              }
+            }
+
             // Update the state
             setNewRoutePath(state);
           }
@@ -198,6 +208,15 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
                   final key = node.arguments['k'];
                   if (key == null) continue;
                   final page = _dialogBuilders[key];
+                  if (page == null) continue;
+                  pages.add(page);
+                  continue;
+                }
+                // If the node is a modal bottom sheet, build the sheet page
+                if (node.name == _kModalNodeName) {
+                  final key = node.arguments['k'];
+                  if (key == null) continue;
+                  final page = _modalBuilders[key];
                   if (page == null) continue;
                   pages.add(page);
                   continue;
@@ -446,6 +465,10 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
       <String, Page<Object?>>{};
   final Map<String, Object?> _dialogResults = <String, Object?>{};
 
+  final Map<String, Page<Object?>> _modalBuilders =
+      <String, Page<Object?>>{};
+  final Map<String, Object?> _modalResults = <String, Object?>{};
+
   /// Show a dialog as a declarative page.
   @internal
   Future<T?> showDialog<T>(
@@ -592,6 +615,92 @@ final class OctopusDelegate$NavigatorImpl extends OctopusDelegate
       _observer.removeListener(onStateChanged);
       _dialogBuilders.remove(key);
       _dialogResults.remove(key);
+      if (!completer.isCompleted) completer.complete();
+    }
+  }
+
+  /// Show a modal bottom sheet as a declarative page.
+  @internal
+  Future<T?> showModalBottomSheet<T>({
+    required WidgetBuilder builder,
+    Map<String, String>? arguments,
+    Color? backgroundColor,
+    double? elevation,
+    ShapeBorder? shape,
+    Clip? clipBehavior,
+    BoxConstraints? constraints,
+    Color? barrierColor,
+    String? barrierLabel,
+    bool isScrollControlled = false,
+    double scrollControlDisabledMaxHeightRatio = 9.0 / 16.0,
+    bool isDismissible = true,
+    bool enableDrag = true,
+    bool? showDragHandle,
+    bool useSafeArea = false,
+    Offset? anchorPoint,
+    bool? requestFocus,
+  }) async {
+    final key = shortHash(UniqueKey());
+    final completer = Completer<T?>();
+    void onStateChanged() {
+      if (completer.isCompleted) return;
+      final node = _observer.value.children.firstWhereOrNull((node) =>
+          node.name == _kModalNodeName && node.arguments['k'] == key);
+      if (node != null) return;
+      final result = _modalResults.remove(key);
+      completer.complete(result is T ? result : null);
+    }
+
+    try {
+      _modalBuilders[key] = OctopusModalBottomSheetPage(
+        name: _kModalNodeName,
+        builder: builder,
+        arguments: <String, String>{
+          'k': key,
+          ...?arguments,
+        },
+        restorationId: null,
+        backgroundColor: backgroundColor,
+        elevation: elevation,
+        shape: shape,
+        clipBehavior: clipBehavior,
+        constraints: constraints,
+        barrierColor: barrierColor,
+        barrierLabel: barrierLabel,
+        isScrollControlled: isScrollControlled,
+        scrollControlDisabledMaxHeightRatio:
+            scrollControlDisabledMaxHeightRatio,
+        isDismissible: isDismissible,
+        enableDrag: enableDrag,
+        showDragHandle: showDragHandle,
+        useSafeArea: useSafeArea,
+        anchorPoint: anchorPoint,
+        requestFocus: requestFocus,
+      );
+      await setNewRoutePath(
+        currentConfiguration.mutate()
+          ..intention = OctopusStateIntention.navigate
+          ..children.add(
+            OctopusNode.mutable(
+              _kModalNodeName,
+              arguments: <String, String>{
+                'k': key,
+                ...?arguments,
+              },
+            ),
+          ),
+      );
+      await Future<void>.delayed(Duration.zero);
+      _observer.addListener(onStateChanged);
+      onStateChanged();
+      final result = await completer.future;
+      return result;
+    } on Object {
+      return null; // ignore errors
+    } finally {
+      _observer.removeListener(onStateChanged);
+      _modalBuilders.remove(key);
+      _modalResults.remove(key);
       if (!completer.isCompleted) completer.complete();
     }
   }

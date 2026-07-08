@@ -1,3 +1,7 @@
+## 0.0.11
+
+- Add `Octopus.showModalBottomSheet` (page-based Completer pattern, node `m`)
+
 ## 0.0.9
 
 - Update to 3.24.0 flutter version

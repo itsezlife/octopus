@@ -207,4 +207,31 @@ abstract interface class Octopus {
     TraversalEdgeBehavior? directionalTraversalEdgeBehavior,
     bool fullscreenDialog = false,
   });
+
+  /// Show a modal bottom sheet as a declarative page.
+  ///
+  /// The sheet is added to the Octopus navigation stack (not via imperative
+  /// [Navigator.push]), so system back closes the sheet through [onPopPage]
+  /// instead of [SystemNavigator.pop].
+  ///
+  /// Returns the value passed to [Navigator.pop], or `null` if dismissed.
+  Future<T?> showModalBottomSheet<T>({
+    required WidgetBuilder builder,
+    Map<String, String>? arguments,
+    Color? backgroundColor,
+    double? elevation,
+    ShapeBorder? shape,
+    Clip? clipBehavior,
+    BoxConstraints? constraints,
+    Color? barrierColor,
+    String? barrierLabel,
+    bool isScrollControlled = false,
+    double scrollControlDisabledMaxHeightRatio = 9.0 / 16.0,
+    bool isDismissible = true,
+    bool enableDrag = true,
+    bool? showDragHandle,
+    bool useSafeArea = false,
+    Offset? anchorPoint,
+    bool? requestFocus,
+  });
 }
